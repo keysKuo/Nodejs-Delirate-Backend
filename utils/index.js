@@ -1,3 +1,6 @@
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+
 
 function mailForm(options) {
     let logo_link = options.logo_link || process.env.LOGO_LINK;
@@ -41,4 +44,14 @@ function mailForm(options) {
     `;
 };
 
-export { mailForm };
+// Hash password using bcrypt
+function hashBcrypt(password) {
+    return bcrypt.hashSync(password, 10);
+}
+
+// Hash email using md5
+function hashMD5(email) {
+    return crypto.createHash('md5').update(email).digest('hex');
+}
+
+export { mailForm, hashBcrypt, hashMD5 };

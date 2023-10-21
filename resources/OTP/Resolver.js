@@ -7,7 +7,14 @@ dotenv.config();
 
 const secretKey = process.env.JWT_SECRET_KEY;
 
-async function POST_VerifyOTP(req, res, next) {
+
+/**
+ * Description: Verify login with OTP
+ * Request:     POST /account/confirm_otp
+ * Send:        JSON object which contains code(OTP)     
+ * Receive:     200 if success, otherwise fail
+ */
+async function POST_ConfirmOTP(req, res, next) {
     const { code } = req.body;
 
     const token = req.header('Authorization');
@@ -37,7 +44,7 @@ async function POST_VerifyOTP(req, res, next) {
             })
         }
 
-        const otp = await OTP.findOne({code});
+        const otp = await OTP.findOne({code, email: decoded.email});
 
         if(!otp) {
             return res.json({
@@ -47,18 +54,14 @@ async function POST_VerifyOTP(req, res, next) {
             })
         }
         
-        const { username, fullname, email, role } = decoded.user;
-        req.user = {
-            username, fullname, email, role
-        }
 
         return res.json({
             success: true,
             status: 200,
             msg: 'Login successfully',
-            data: req.user
+            data: decoded.user
         })
     });
 }
 
-export { POST_VerifyOTP };
+export { POST_ConfirmOTP };

@@ -3,7 +3,7 @@ import OTP from '../OTP/Model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { sendMail, QRCODE } from 'sud-libs';
-import { mailForm } from '../../utils/index.js';
+import { mailForm, hashBcrypt, hashMD5 } from '../../utils/index.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -14,8 +14,16 @@ const auth = {
     pass: process.env.HOST_PASSWORD
 }
 
+
+
+/**
+ * Description: Register a new Account
+ * Request:     POST /account/register
+ * Send:        JSON object which contains email, password, password_confirm, name, location, phone, role     
+ * Receive:     200 if success, otherwise fail
+ */
 async function POST_Register(req, res, next) {
-    const { username, password, password_confirm, fullname, email, role } = req.body;
+    const { email, password, password_confirm, name, location, phone, role } = req.body;
 
     if(password != password_confirm) {
         return res.json({
@@ -25,81 +33,75 @@ async function POST_Register(req, res, next) {
         })
     }
     
-    const my_account = await Account.findOne({ username });
+    const my_account = await Account.findOne({ email });
     
     if(my_account) {
         return res.json({
             success: false,
             status: 300,
-            msg: 'This username or email is existed',
+            msg: 'Account already exist',
         })
     }
-    else {
-        bcrypt.hash(password, 10, async function(error, hashed_password) {
-            if(error) {
-                return res.json({
-                    success: false,
-                    status: 501,
-                    msg: error
-                });
-            }
 
-            try {
-                let new_account = await new Account({
-                    username: username,
-                    password: hashed_password,
-                    fullname: fullname,
-                    email: email,
-                    role: role,
-                }).save();
+    try {
+        let new_account = await new Account({
+            email, name, location, phone, role,
+            password: hashBcrypt(password),
+        }).save();
 
-                // Encode URL
-                const token = jwt.sign({id:new_account._id}, secretKey);
-                const qrcode = await QRCODE(`http://localhost:8080/account/verified/${token}`);
-                
-                // Send mail verified
-                const options = {
-                    from: auth.user,
-                    to: email,
-                    subject: 'Thông tin tài khoản từ Delirate',
-                    text: `Xin chào ${fullname}`,
-                    attachDataUrls: true,
-                    html: mailForm({
-                        logo_link: process.env.LOGO_LINK || '',
-                        caption: `Xác thực tài khoản từ Delirate`,
-                        content: 
-                        `
-                            <img src="${qrcode}" />
-                            <h5>Vui lòng quét QR code để xác thực tài khoản</h5>
-                        `
-                    })
-                };
+        // Encode URL
+        const token = jwt.sign({id:new_account._id}, secretKey);
+        const qrcode = await QRCODE(`http://localhost:8080/account/verified/${token}`);
+        
+        // Send mail verified
+        const options = {
+            from: auth.user,
+            to: email,
+            subject: 'Thông tin tài khoản từ Delirate',
+            text: `Xin chào ${name}`,
+            attachDataUrls: true,
+            html: mailForm({
+                logo_link: process.env.LOGO_LINK || '',
+                caption: `Xác thực tài khoản từ Delirate`,
+                content: 
+                `
+                    <p>http://localhost:8080/account/verify/${token}</p>
+                    <h5>Vui lòng quét QR code để xác thực tài khoản</h5>
+                `
+            })
+        };
 
-                sendMail(auth, options, (err) => {
-                    console.log(err);
-                })
+        sendMail(auth, options, (err) => {
+            console.log(err);
+        })
 
-                return res.json({
-                    success: true,
-                    status: 200,
-                    msg: 'Account registed'
-                })
-            }
-            catch (err) {
-                return res.json({
-                    success: false,
-                    status: 500,
-                    msg: err
-                })
-            }       
+        return res.json({
+            success: true,
+            status: 200,
+            msg: 'Account registed'
         })
     }
+    catch (err) {
+        return res.json({
+            success: false,
+            status: 500,
+            msg: 'Register account rejected'
+        })
+    }     
 }
 
-async function POST_Login(req, res, next) {
-    const { username, password } = req.body;
 
-    const my_account = await Account.findOne({username}).lean();
+
+/**
+ * Description: Login to App
+ * Request:     POST /account/login
+ * Send:        JSON object which contains email, password     
+ * Receive:     200 if success, otherwise fail
+ */
+async function POST_Login(req, res, next) {
+    const { email, password } = req.body;
+
+    const my_account = await Account.findOne({email}).lean();
     
     if(!my_account) {
         return res.json({
@@ -108,69 +110,71 @@ async function POST_Login(req, res, next) {
             msg: 'Account invalid'
         })
     }
-    else {
-        if(my_account.status !== 'activated') {
-            return res.json({
-                success: false,
-                status: 300,
-                msg: 'Account not activated'
-            })
-        }
-        
-        bcrypt.compare(password, my_account.password, async function(error, result) {
-            if(error) {
-                return res.json({
-                    success: false,
-                    status: 501,
-                    msg: error
-                })
-            }
 
-            if(result) {
-                const code = Math.floor(Math.random() * (9999 - 1000) + 1000);
-                const token = jwt.sign({user: my_account, code: code}, secretKey);
-                
-                await new OTP({
-                    email: my_account.email,
-                    code: code,
-                }).save();
-            
-                const options = {
-                    from: auth.user,
-                    to: my_account.email,
-                    subject: `${code} Mã xác nhận đăng nhập tài khoản Delirate`,
-                    html: mailForm({
-                        caption: 'Mã xác nhận đăng nhập',
-                        content: ` 
-                        <h1>${code}</h1>
-                        `
-                    })
-                };
-            
-                sendMail(auth, options, (err) => {
-                    if(err)
-                        console.log(err);
-                });
-            
-                return res.json({
-                    success: true,
-                    status: 200,
-                    msg: 'OTP sent',
-                    token: token
-                })
-
-            }
-            else {
-                return res.json({
-                    success: false,
-                    status: 300,
-                    msg: 'Incorrect password',
-                })
-            }
+    if(my_account.status !== 'activated') {
+        return res.json({
+            success: false,
+            status: 300,
+            msg: 'Account not activated'
         })
     }
+
+    if(!bcrypt.compareSync(password, my_account.password)) {
+        return res.json({
+            success: false,
+            status: 300,
+            msg: 'Incorrect password',
+        })
+    }
+
+    // Generate OTP and Send OTP
+    const user_info = {
+        email: my_account.email,
+        name: my_account.name,
+        location: my_account.location,
+        phone: my_account.phone,
+        role: my_account.role
+    }
+    const code = Math.floor(Math.random() * (9999 - 1000) + 1000);
+    const token = jwt.sign({user: user_info, code: code}, secretKey);
+    
+    await new OTP({
+        email: my_account.email,
+        code: code,
+    }).save();
+
+    const options = {
+        from: auth.user,
+        to: my_account.email,
+        subject: `${code} Mã xác nhận đăng nhập tài khoản Delirate`,
+        html: mailForm({
+            caption: 'Mã xác nhận đăng nhập',
+            content: ` 
+            <h1>${code}</h1>
+            `
+        })
+    };
+
+    sendMail(auth, options, (err) => {
+        if(err)
+            console.log(err);
+    });
+
+    return res.json({
+        success: true,
+        status: 200,
+        msg: 'OTP sent',
+        token: token,
+    });
 }
 
+
+/**
+ * Description: Activate an account by scanning QR code
+ * Request:     POST /account/verify/:token
+ * Send:        jwt token which contains account_id as param    
+ * Receive:     200 if success, otherwise fail
+ */
 async function GET_Verify(req, res, next) {
     const { token } = req.params;
 
@@ -179,7 +183,7 @@ async function GET_Verify(req, res, next) {
             return res.json({
                 success: false,
                 status: 500,
-                msg: error,
+                msg: 'JWT invalid'
             });
         }
 

@@ -4,13 +4,13 @@ POST http://localhost:8080/account/register
 content-type: application/json
 
 {
-    "username": "nkeys1222",
+    "email": "nkeyskuo124@gmail.com",
     "password": "123123",
     "password_confirm": "123123",
-    "fullname": "Kuo Nhan Dung",
-    "email": "nkeyskuo124@gmail.com",
-    "role": "adminstrator",
-    "status": "activated"
+    "name": "Kuo Nhan Dung",
+    "location": "Illinois St",
+    "phone": "0767916592",
+    "role": "retailer"
 }
 
 ###
@@ -19,7 +19,7 @@ POST http://localhost:8080/account/login
 content-type: application/json 
 
 {
-    "username": "nkeyskuo",
+    "email": "nkeyskuo124@gmail.com",
     "password": "123123"
 }
 
@@ -27,8 +27,8 @@ content-type: application/json
 
 POST http://localhost:8080/account/confirm_otp
 content-type: application/json 
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MmRlNjFjMWU0YmE1YjhhZDMwMWE2YyIsInVzZXJuYW1lIjoibmtleXNrdW8iLCJwYXNzd29yZCI6IiQyYSQxMCRxVE0vM2ZzWUwvaWh4Vkd6cGtXbkguWnZFdGRicVhDZGU0YVEvck80aDBqLkNsdGF1SlBKMiIsImZ1bGxuYW1lIjoiS3VvIE5oYW4gRHVuZyIsImVtYWlsIjoibmtleXNrdW8xMjRAZ21haWwuY29tIiwicm9sZSI6ImFkbWluc3RyYXRvciIsInN0YXR1cyI6ImFjdGl2YXRlZCIsImNyZWF0ZWRBdCI6IjIwMjMtMTAtMTdUMDE6NDA6NDQuMjA5WiIsInVwZGF0ZWRBdCI6IjIwMjMtMTAtMTdUMDE6NDA6NDQuMjA5WiIsIl9fdiI6MH0sImNvZGUiOjEzMTgsImlhdCI6MTY5NzYyNjUxN30.S3zsBMETMzgJqEPdHhc5RMOl6Eqmf7v5YEr9SQDiVpU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoibmtleXNrdW8xMjRAZ21haWwuY29tIiwibmFtZSI6Ikt1byBOaGFuIER1bmciLCJsb2NhdGlvbiI6IklsbGlub2lzIFN0IiwicGhvbmUiOiIwNzY3OTE2NTkyIiwicm9sZSI6InJldGFpbGVyIn0sImNvZGUiOjgxOTEsImlhdCI6MTY5Nzc4NDQzM30.ZKlguG6O8plwHzyKYGTuJkv3XnFX0FCOjZoju7UTfhQ
 
 {
-    "code": "1318"
+    "code": "8191"
 }
