@@ -1,0 +1,74 @@
+NEAR
+
+1. Definition
+    NEAR là một nền tảng blockchain được thiết kế để hỗ trợ việc xây dựng và phát triển các ứng dụng phi tập trung (Decentralized App). 
+    Được phát triển bởi các chuyên gia trong lĩnh vực blockchain vào năm 2020
+    Một số nền tảng blockchain phổ biến: Ethereum, Polkadot, Solana, EOS, ...
+
+    * Đội ngũ phát triển: 
+        NEAR được phát triển bởi Near Protocol, Inc,... và 1 số công ty công nghệ blockchain
+        Có trụ sở tại San Francisco, California và cộng đồng lập trình viên rộng lớn
+
+
+    * Mục tiêu chính:
+        NEAR đặt ra mục tiêu là cung cấp 1 môi trường phát triển dApps để sử dụng và có khả năng mở rộng tốt.
+        Nó được xây dựng với mục tiêu giải quyết các vấn đề về hiệu suất, chi phí và trải nghiệm người dùng mà nhiều nền tảng blockchain khác chưa làm được. 
+    
+    * Công nghệ:
+        NEAR sử dụng công nghệ gọi là "sharding" để tăng khả năng mở rộng (Scalibility) của mạng lưới.
+        Sharding cho phép mạng chia thành các phân đoạn nhỏ để xử lý các giao dịch và ứng dụng đồng thời mà không cần tiêu tốn nhiều tài nguyên 
+
+    * Một số ưu điểm của NEAR:
+        Tính bảo mật và an toàn cao, sử dụng kiến thức mới nhất trong lĩnh vực bảo mật để bảo về tài sản và giao dịch của người dùng
+        Khả năng mở rộng cao nhờ sử dụng công nghệ sharding 
+        Dễ dàng triển khai và tích hợp, hỗ trợ nhiều ngôn ngữ 
+        Một số các ứng dụng thực tế được phát triển trên nền tảng NEAR: 
+            Paras: một thị trường nghệ thuật phi tập trung, cho phép người dung buôn bán các tác phẩm nghệ thuật kĩ thuật số, được lưu trữ và quản lý = smart contract trên NEAR 
+            Ref Finance: một hệ thống tài chính phi tập trung, cung cấp dịch vụ vay, cho vay và gửi tiền, giúp người dùng tận dùng tài sản số mà họ có 
+            Ngoài ra còn có 1 số ứng dụng như NFT, blockchain games, e-wallet cũng được phát triển trên nền tảng NEAR
+
+    * Mở rộng và phát triển:
+        NEAR đã và đang phát triển với các cải tiến và nâng cấp liên tục để nâng cao khả năng mở rộng và hiệu suất của nền tảng
+
+    -- Suy nghĩ riêng --
+    ( Việc xây dựng và phát triển ra các nền tảng blockchain nó cũng giống như việc họ đang xây dựng 1 quốc gia ảo. Trong quốc gia đó họ dùng đồng token riêng của họ
+    thay cho các loại tiền tệ trong cuộc sống thật để trao đổi , buôn bán các dịch vụ được họ phát triển ở quốc gia đó. Và việc đồng token (tiền tệ áo) đó có được công 
+    nhận giá trị của nó hay không phụ thuộc vào sự phát triển của cộng đồng tham gia nền tảng này của họ. Ví dụ như NEAR, càng nhiều người tin tưởng và tham gia sử dụng đồng 
+    NEAR để thay cho tiền thật trao đổi buôn bán trên nền tảng đó chính là bàn đạp cho sự phát triển của giá trị đồng token của nền tảng đó. Nó cũng giống như đồng đô la mĩ 
+    luôn được ưa chuộng ở các quốc gia trên thế giới vì nó khẳng định được vị thế của nó trên thị trường tiền tệ. Bài toàn này được áp dụng lại trên các loại tiền tệ ảo mà các nền
+    tảng phát triển nên. Tất nhiên bởi vì bởi vì nó là đồng tiền ảo nên việc truy cứu trách nhiệm trong trường hợp xãy ra vấn đề là không thể được như các đồng tiền thật được 
+    công nhận trong đời sống thực. Tuy nhiên nó cũng là 1 bước cải tiến về tư duy trong quá trình trao đổi và phát triển. Và quan trọng hơn hết là nó có thể mang lại lợi ích cho
+    đội ngũ phát triển cũng như cộng đồng tham gia vào sử dụng nền tảng đó.
+    )
+
+    * Lập trình thông qua Rust hoặc AssemblyScript:
+        NEAR hỗ trợ lập trình dApps bằng nhiều ngôn ngữ
+        Tuy nhiên Rust va 2 AssemblyScript được coi là 2 ngôn ngữ chính để phát triển trên nền tảng này.
+
+    * Token của NEAR:
+        Token chính của NEAR được gọi là "NEAR" - Giá trị của đồng NEAR hiện tại khi quy đổi sang USDT là vào khoảng 1.1 ~ 1.2 USDT. 1 USDT ~ 0.999925 USD 
+        Token này có nhiều ứng dụng trong hệ sinh thái NEAR, bao gồm thanh toán các giao dịch và phí mạng
+        Ngoài ra còn có hỗ trợ khám phá và sử dụng các ứng dụng trên mạng
+
+    * Hợp đồng thông minh (Smart Contract): 
+        NEAR hộ trợ triển khai smart contract
+        Cho phép các nhà phát triển xây dựng các ứng dụng phi tập trung (dApps) với các tính năng thông minh và tự động
+        Hợp đồng thông minh (smart contract) là một loại chương trình máy tính tự động, tự thực hiện, và tự thỏa thuận được xây dựng trên nền tảng blockchain. 
+        Smart contract hoạt động dựa trên các quy tắc và điều khoản đã được lập trình sẵn và được thiết kế để thực hiện một loạt các hành động mà không cần sự can thiệp của bên thứ ba nào.
+
+        Dưới đây là một số điểm quan trọng về smart contract:
+
+        1. **Tự thực hiện**: Smart contract hoạt động tự động và tự thực hiện các hành động khi các điều kiện đã được xác định trong hợp đồng được đáp ứng. Điều này giúp loại bỏ sự phụ thuộc vào người trung gian và tạo ra tính minh bạch và đáng tin cậy.
+
+        2. **Thực hiện không thể thay đổi**: Một khi smart contract đã được triển khai trên blockchain, nó không thể bị thay đổi hoặc tắt trừ khi các điều kiện trong hợp đồng cho phép hoặc thông qua một sự thay đổi được thực hiện bởi cộng đồng dùng để quản lý blockchain.
+
+        3. **Dựa trên mã hóa**: Smart contract được viết bằng mã hóa và lưu trữ trên blockchain, điều này đảm bảo tính bảo mật và không thể thay đổi của hợp đồng.
+
+        4. **Áp dụng rộng rãi**: Smart contract có thể áp dụng trong nhiều lĩnh vực, từ tài chính, bất động sản, quản lý chuỗi cung ứng, đến giáo dục và y tế. Bất kỳ lĩnh vực nào có nhu cầu trong việc tự động hóa và xác thực các giao dịch và thỏa thuận cũng có thể sử dụng smart contract.
+
+        5. **Thanh toán tự động**: Một trong các ứng dụng phổ biến của smart contract là trong lĩnh vực tài chính và thanh toán. Chẳng hạn, một smart contract có thể tự động chuyển tiền từ tài khoản này sang tài khoản khác khi một điều kiện cụ thể được đáp ứng.
+
+        6. **Tính minh bạch**: Vì smart contract hoạt động trên blockchain, mọi giao dịch và hành động trong hợp đồng được ghi lại và có thể được kiểm tra bởi bất kỳ ai.
+
+        Smart contract đã giúp tạo ra các ứng dụng phi tập trung và cách tiếp cận mới đối với thỏa thuận và giao dịch, đặc biệt trong lĩnh vực blockchain và tiền điện tử.
+    
