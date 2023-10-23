@@ -1,66 +1,62 @@
 import OTP from './Model.js';
-import { sendMail } from 'sud-libs';
 import dotenv from 'dotenv';
-import { mailForm } from '../../utils/index.js';
 import jwt from 'jsonwebtoken';
 dotenv.config();
 
 const secretKey = process.env.JWT_SECRET_KEY;
 
-
 /**
  * Description: Verify login with OTP
  * Request:     POST /account/confirm_otp
- * Send:        JSON object which contains code(OTP)     
+ * Send:        JSON object which contains code(OTP)
  * Receive:     200 if success, otherwise fail
  */
 async function POST_ConfirmOTP(req, res, next) {
     const { code } = req.body;
 
     const token = req.header('Authorization');
-    
+
     if (!token) {
-        return res.json({ 
+        return res.json({
             success: false,
             status: 403,
-            msg: 'JWT not found' 
+            msg: 'JWT not found',
         });
     }
 
-    jwt.verify(token.replace('Bearer ',''), secretKey, async (err, decoded) => {
+    jwt.verify(token.replace('Bearer ', ''), secretKey, async (err, decoded) => {
         if (err) {
-            return res.json({ 
+            return res.json({
                 success: false,
                 status: 401,
-                msg: 'JWT invalid'
+                msg: 'JWT invalid',
             });
         }
-        
+
         if (decoded.code != code) {
             return res.json({
                 success: false,
                 status: 300,
-                msg: 'OTP invalid'
-            })
+                msg: 'OTP invalid',
+            });
         }
+        
+        const otp = await OTP.findOne({ code, email: decoded.user.hashed_email });
 
-        const otp = await OTP.findOne({code, email: decoded.email});
-
-        if(!otp) {
+        if (!otp) {
             return res.json({
                 success: false,
                 status: 404,
-                msg: 'OTP not found'
-            })
+                msg: 'OTP not found',
+            });
         }
-        
 
         return res.json({
             success: true,
             status: 200,
             msg: 'Login successfully',
-            data: decoded.user
-        })
+            data: decoded.user,
+        });
     });
 }
 

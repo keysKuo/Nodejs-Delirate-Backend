@@ -1,6 +1,8 @@
 import { POST_ConfirmOTP } from '../OTP/Resolver.js';
-import { GET_Verify, POST_Login, POST_Register } from './Resolver.js' ;
+import { GET_Verify, POST_Login, POST_Register } from './Resolver.js';
+
 import express from 'express';
+
 
 const router = express.Router();
 

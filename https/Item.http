@@ -1,0 +1,7 @@
+###
+
+GET http://localhost:8080/item/get_item_info/I1698001347001479009
+
+###
+
+GET http://localhost:8080/item/get_all_items

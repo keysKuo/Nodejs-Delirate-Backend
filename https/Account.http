@@ -4,13 +4,13 @@ POST http://localhost:8080/account/register
 content-type: application/json
 
 {
-    "email": "nkeyskuo124@gmail.com",
+    "email": "contact.ezgroup@gmail.com",
     "password": "123123",
     "password_confirm": "123123",
     "name": "Kuo Nhan Dung",
     "location": "Illinois St",
     "phone": "0767916592",
-    "role": "retailer"
+    "role": "customer"
 }
 
 ###
@@ -27,8 +27,8 @@ content-type: application/json
 
 POST http://localhost:8080/account/confirm_otp
 content-type: application/json 
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoibmtleXNrdW8xMjRAZ21haWwuY29tIiwibmFtZSI6Ikt1byBOaGFuIER1bmciLCJsb2NhdGlvbiI6IklsbGlub2lzIFN0IiwicGhvbmUiOiIwNzY3OTE2NTkyIiwicm9sZSI6InJldGFpbGVyIn0sImNvZGUiOjgxOTEsImlhdCI6MTY5Nzc4NDQzM30.ZKlguG6O8plwHzyKYGTuJkv3XnFX0FCOjZoju7UTfhQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Imhhc2hlZF9lbWFpbCI6IjRjZGFhMGUwMTExMGUzZDY0OTE2ZGY1ZDJiYzA0NGNjIiwibmFtZSI6Ikt1byBOaGFuIER1bmciLCJsb2NhdGlvbiI6IklsbGlub2lzIFN0IiwicGhvbmUiOiIwNzY3OTE2NTkyIiwicm9sZSI6InJldGFpbGVyIn0sImNvZGUiOjc3MTMsImlhdCI6MTY5ODAzMTk0NX0.i-NCs7xB1mcaKIBeL8yvRyURtXPeCixMHV-srdY8y-g
 
 {
-    "code": "8191"
+    "code": "7713"
 }

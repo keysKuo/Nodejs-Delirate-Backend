@@ -15,7 +15,7 @@ database.connect();
 
 app.use(cors());
 app.use(express.urlencoded());
-app.use(express.static('public'));
+app.use(express.static('src/public'));
 app.use(express.json());
 app.use(cookie('Origin'));
 app.use(session({
