@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/register', POST_Register);
 router.post('/login', POST_Login);
-router.get('/verify/:token', GET_Verify);
+router.get('/verify', GET_Verify);
 router.post('/confirm_otp', POST_ConfirmOTP);
 
 export default router;

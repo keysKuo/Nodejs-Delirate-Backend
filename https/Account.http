@@ -32,3 +32,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Imhhc2hlZ
 {
     "code": "7713"
 }
+
+
+###
+
+POST https://sud-delirate.onrender.com/account/register
+content-type: application/json
+
+{
+    "email": "contact.ezgroup@gmail.com",
+    "password": "123123",
+    "password_confirm": "123123",
+    "name": "Kuo Nhan Dung",
+    "location": "Illinois St",
+    "phone": "0767916592",
+    "role": "customer"
+}
+

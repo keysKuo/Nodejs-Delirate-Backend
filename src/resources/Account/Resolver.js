@@ -54,7 +54,7 @@ async function POST_Register(req, res, next) {
 
         // Encode URL
         const token = jwt.sign({ id: new_account._id }, secretKey);
-        const qrcode = await QRCODE(`http://localhost:8080/account/verified/${token}`);
+        const qrcode = await QRCODE(`https://sud-delirate.onrender.com/account/verify?token=${token}`);
 
         // Send mail verified
         const options = {
@@ -67,7 +67,7 @@ async function POST_Register(req, res, next) {
                 logo_link: process.env.LOGO_LINK || '',
                 caption: `Xác thực tài khoản từ Delirate`,
                 content: `
-                    <p>http://localhost:8080/account/verify/${token}</p>
+                    <img src="${code}" />
                     <h5>Vui lòng quét QR code để xác thực tài khoản</h5>
                 `,
             }),
@@ -173,7 +173,7 @@ async function POST_Login(req, res, next) {
  * Receive:     200 if success, otherwise fail
  */
 async function GET_Verify(req, res, next) {
-    const { token } = req.params;
+    const { token } = req.query;
 
     jwt.verify(token, secretKey, async (error, decoded) => {
         if (error) {
