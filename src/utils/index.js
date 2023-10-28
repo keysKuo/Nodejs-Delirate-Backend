@@ -10,7 +10,7 @@ const ACCOUNT_ID = process.env.ACCOUNT_ID || "nkeyskuo147.testnet"
 const NETWORK_ID = process.env.NETWORK_ID || "testnet";
 
 const KEY_STORE = new keyStores.InMemoryKeyStore();
-const PRIVATE_KEY = process.env.PRIVATE_KEY || 'ed25519:59y2NCBgSQbxAkzytyYSvc2Z4EFGRD2WECa7ppPF6SGpMAfWyHu93Fez1HkYxSmbiUzrXhchrEw5Jx2kKJqeo5BE';
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const keyPair = KeyPair.fromString(PRIVATE_KEY);
 
 
