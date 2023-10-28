@@ -67,7 +67,7 @@ async function POST_Register(req, res, next) {
                 logo_link: process.env.LOGO_LINK || '',
                 caption: `Xác thực tài khoản từ Delirate`,
                 content: `
-                    <img src="${code}" />
+                    <img src="${qrcode}" />
                     <h5>Vui lòng quét QR code để xác thực tài khoản</h5>
                 `,
             }),
