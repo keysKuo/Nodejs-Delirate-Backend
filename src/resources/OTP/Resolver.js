@@ -15,7 +15,7 @@ async function POST_ConfirmOTP(req, res, next) {
     const { code } = req.body;
 
     const token = req.header('Authorization');
-
+    
     if (!token) {
         return res.json({
             success: false,
@@ -55,7 +55,7 @@ async function POST_ConfirmOTP(req, res, next) {
             success: true,
             status: 200,
             msg: 'Login successfully',
-            data: decoded.user,
+            token: jwt.sign(decoded.user, secretKey)
         });
     });
 }

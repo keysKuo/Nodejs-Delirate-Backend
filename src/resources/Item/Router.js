@@ -9,6 +9,6 @@ router.get('/get_all_items', GET_AllItems);
 
 router.post('/create_item', upload.single('item-image'),  POST_CreateItem);
 router.get('/create_item', (req, res, next) => {
-    return res.sendFile(base_url + 'create.html');
+    return res.sendFile('create.html');
 })
 export default router
