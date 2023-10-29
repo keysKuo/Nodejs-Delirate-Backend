@@ -13,6 +13,6 @@ router.get('/get_all_items', GET_AllItems);
 
 router.post('/create_item', upload.single('item-image'),  POST_CreateItem);
 router.get('/create_item', (req, res, next) => {
-    return res.sendFile(path.join(__dirname,'create.html'));
+    return res.sendFile(__dirname + '/create.html');
 })
 export default router
