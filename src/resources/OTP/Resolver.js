@@ -55,7 +55,7 @@ async function POST_ConfirmOTP(req, res, next) {
             success: true,
             status: 200,
             msg: 'Login successfully',
-            token: jwt.sign(decoded.user, secretKey)
+            token: jwt.sign(decoded.user, secretKey, { expiresIn: '5m' })
         });
     });
 }

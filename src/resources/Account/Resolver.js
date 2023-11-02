@@ -134,36 +134,46 @@ async function POST_Login(req, res, next) {
         phone: my_account.phone,
         role: my_account.role,
     };
-    const code = Math.floor(Math.random() * (9999 - 1000) + 1000);
-    const token = jwt.sign({ user: user_info, code: code }, secretKey);
 
-    await new OTP({
-        email: my_account.hashed_email,
-        code: code,
-    }).save();
+    
 
-    const options = {
-        from: auth.user,
-        to: my_account.email,
-        subject: `${code} Mã xác nhận đăng nhập tài khoản Delirate`,
-        html: mailForm({
-            caption: 'Mã xác nhận đăng nhập',
-            content: ` 
-            <h1>${code}</h1>
-            `,
-        }),
-    };
-
-    sendMail(auth, options, (err) => {
-        if (err) console.log(err);
-    });
-
-    return res.json({
-        success: true,
-        status: 200,
-        msg: 'OTP sent',
-        token: token,
-    });
+    try {
+        let otp = await new OTP({
+            email: my_account.hashed_email,
+            code: Math.floor(Math.random() * (9999 - 1000) + 1000),
+        }).save();
+        const token = jwt.sign({ user: user_info, code: otp.code }, secretKey);
+    
+        const options = {
+            from: auth.user,
+            to: my_account.email,
+            subject: `${otp.code} Mã xác nhận đăng nhập tài khoản Delirate`,
+            html: mailForm({
+                caption: 'Mã xác nhận đăng nhập',
+                content: ` 
+                <h1>${otp.code}</h1>
+                `,
+            }),
+        };
+    
+        sendMail(auth, options, (err) => {
+            if (err) console.log(err);
+        });
+    
+        return res.json({
+            success: true,
+            status: 200,
+            msg: 'OTP sent',
+            token: token,
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            status: 500,
+            msg: 'OTP cannot send',
+        });
+    }
+    
 }
 
 /**
