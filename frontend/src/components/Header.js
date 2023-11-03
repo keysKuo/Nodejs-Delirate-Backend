@@ -56,27 +56,25 @@ export default function Header() {
 	},[])
 
     return (
-		<>
-			<header>
-				<div id="page-header">
-					<Image
-						className="logo"
-						css={{ width: "60px" }}
-						src={logo}
-					/>
-					<ul className="page-nav">
-						{nav.map((n) => (
-							<li>
-								<Link to={n.path}>{n.title}</Link>
-							</li>
-						))}
-					</ul>
+        <>
+            <header>
+                <div id="page-header">
+                    <Link to='/'>
+                        <Image className="logo" css={{ width: '60px' }} src={logo} />
+                    </Link>
+                    <ul className="page-nav">
+                        {nav.map((n) => (
+                            <li>
+                                <Link to={n.path}>{n.title}</Link>
+                            </li>
+                        ))}
+                    </ul>
 
-					<Stack className="user-profile" align="center" gap={2}>
-						{isLogin}
-					</Stack>
-				</div>
-			</header>
-		</>
-	);
+                    <Stack className="user-profile" align="center" gap={2}>
+                        {isLogin}
+                    </Stack>
+                </div>
+            </header>
+        </>
+    );
 }

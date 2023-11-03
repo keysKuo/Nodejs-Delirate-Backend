@@ -4,6 +4,7 @@ import LoginScreen from "./screens/Login";
 import RootLayout from "./screens/Root";
 import OTPVerifyScreen from "./screens/OTPVerify";
 import ProductScreen from "./screens/Product";
+import PricingScreen from "./screens/Pricing";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
       { path: '/login', element: <LoginScreen /> },
       { path: '/confirm_otp', element: <OTPVerifyScreen /> },
       { path: '/products', element: <ProductScreen /> },
+      { path: '/pricing', element: <PricingScreen /> },
       
     ]
   }
