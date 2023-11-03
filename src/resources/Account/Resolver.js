@@ -128,6 +128,7 @@ async function POST_Login(req, res, next) {
 
     // Generate OTP and Send OTP
     const user_info = {
+        email: my_account.email,
         hashed_email: my_account.hashed_email,
         name: my_account.name,
         location: my_account.location,
@@ -135,11 +136,9 @@ async function POST_Login(req, res, next) {
         role: my_account.role,
     };
 
-    
-
     try {
         let otp = await new OTP({
-            email: my_account.hashed_email,
+            email: my_account.email,
             code: Math.floor(Math.random() * (9999 - 1000) + 1000),
         }).save();
         const token = jwt.sign({ user: user_info, code: otp.code }, secretKey);

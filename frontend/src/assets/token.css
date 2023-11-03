@@ -1,0 +1,101 @@
+.token-dashboard {
+    background-image: -webkit-linear-gradient(left,#8c66fc,#0274f1);
+    width: 100%;
+    margin: 0 auto;
+    padding: 40px 20px;
+    padding-right: 50px;
+    border: 1px solid black;
+    border-radius: 10px;
+    color: white;
+    margin-top: 60px;
+  
+    .flex-container {
+      display: flex;
+      justify-content: space-between;
+      
+  
+      .text-container {
+        background-image: -webkit-linear-gradient(left,#8c66fc,#0274f1) !important;
+        flex: 1;
+        padding: 0 20px;
+        background: #FFFFFF;
+        position: relative;
+        /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  */
+      }
+  
+      
+    }
+  
+    
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+
+    .logo {
+      max-width: 50px;
+      margin-right: 16px;
+    }
+
+    .token-name {
+      font-weight: bold;
+      margin-top: 4px;
+      font-size: 1.5em
+    }
+  }
+
+  .token-description {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-top: 16px;
+    margin-left: 40px;
+    margin-bottom: 28px;
+    text-align: left;
+    .external-link {
+      font-weight: bold;
+      color: lightgreen;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .value-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 1vw;
+  }
+
+
+  .buy-button {
+    display: inline-block;
+    position: absolute;
+    right: 2.5em;
+    top: 1em;
+    padding: 20px 50px;
+    font-weight: bold;
+    border-radius: 10px;
+    background: black;
+    color: #FFFFFF;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+  }
+  
+
+  .buy-button:hover {
+    color: lightgreen
+  }
+
+  .font-bold {
+    font-weight: 700;
+}
+
+  .number {
+    padding: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+}

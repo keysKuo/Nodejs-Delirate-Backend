@@ -1,5 +1,5 @@
 import React from 'react'
-import { Image, Reveal, Label, Container  } from 'semantic-ui-react'
+import { Image, Reveal  } from 'semantic-ui-react'
 import OverlayImage from '../components/OverlayImage';
 
 const Reveals = ({ name, price, visible, hidden }) => (

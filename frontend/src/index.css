@@ -11,6 +11,7 @@
 
 main { 
   background-color: white;
+  margin-bottom: 0 !important;
 }
 
 :root {
@@ -119,8 +120,42 @@ ul {
 }
 
 .bg-gradient {
-  background: #373B44 !important;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #4286f4, #373B44) !important;  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #4286f4, #373B44); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #12c2e9;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #f64f59, #c471ed, #12c2e9);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #f64f59, #c471ed, #12c2e9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
+}
+
+.home-banner {
+  width: 70% !important;
+  border: 0 !important;
+  margin-top: 150px;
+}
+
+.banner-body p {
+  font-size: 25px
+}
+
+.banner-body h1 {
+  font-size: 3.1rem;
+  line-height: 3.5rem;
+}
+
+.opacity-75 {
+  opacity: .75;
+}
+
+.leading-7 {
+  line-height: 1.75rem;
+}
+
+.font-normal {
+  font-weight: 400;
+  font-size: 20px;
+}
+
+.crypto-status {
+  width: 100%;
+  
+  
 }

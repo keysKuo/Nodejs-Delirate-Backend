@@ -1,32 +1,84 @@
 import '../assets/otp.css';
 import { useLocation } from 'react-router-dom';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Alert } from 'react-ui';
 import axios from 'axios';
-
+import { Container } from 'semantic-ui-react';
 
   export default function OTPVerifyScreen() {
     const location = useLocation();
-    const token = location.state;
-    console.log(token)
+    const email = localStorage.getItem('email');
+
     const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
-    const [otp, setOTP] = useState(["", "", "", ""]);
-    const [msg, setMsg] = useState('');
-
-    const apiUrl = 'http://localhost:8080/account/confirm_otp';
-
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json', // or any other content type
-      };
+    const [ otp, setOTP] = useState(["", "", "", ""]);
+    const [ msg, setMsg] = useState('');
+    const [ resend, setResend ] = useState('Resend new code');
+    const [ counter, setCounter ] = useState(90);
+    const [ isCounting, setIsCounting ] = useState(false);
+    const [ token, setToken ] = useState(location.state)
     
-    const axiosInstance = axios.create({
-      headers: headers,
-    });
+    console.log(token)
+
+    useEffect(() => {
+      let interval;
+      
+      if (isCounting) {
+        interval = setInterval(() => {
+          if(counter === 0) {
+            setIsCounting(false);
+            setResend('Resend new code')
+          }
+    
+          setCounter(counter - 1)
+          setResend(<span className='text-danger'>{counter}s</span>);
+        }, 1000);
+      }
+  
+      return () => {
+        clearInterval(interval);
+      };
+    }, [isCounting, counter, resend]);
+
+
+    const startCounting = () => {
+      setIsCounting(true);
+    };
+
+    const apiUrl = 'http://localhost:8080/';
+
+
+    const resendOTP = async () => {
+      try {
+        const response = await axios.post(apiUrl + `account/resend_otp`, {
+          email: email
+        })
+
+        console.log(response);
+        const data = response.data;
+
+        if(data.success) {
+          setToken(data.token);
+        }
+        else{
+          setMsg(data.msg +  "!")
+        }
+      } catch (err) {
+        setMsg(err.msg + '!');
+      }
+    }
 
     const fetchData = async () => {
         try {
-            const response = await axiosInstance.post(apiUrl, {
+            let headers = {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json', // or any other content type
+            };
+
+            let axiosInstance = axios.create({
+              headers: headers,
+            });
+
+            const response = await axiosInstance.post(apiUrl + "account/confirm_otp", {
                 code: otp.join("")
             });
             
@@ -62,7 +114,8 @@ import axios from 'axios';
     };
 
     return (
-      <div className="card">
+      <Container style={{ width: '50%', marginTop: '60px', height: '570px'}}>
+        <div className="card">
         <div className="card-header">
           {/* <img src="./smartphone-2.svg" alt="smartphone" /> */}
           <div className="header-text">Two-Factor Verification</div>
@@ -97,7 +150,12 @@ import axios from 'axios';
             Submit
           </button>
         </form>
-        <div className="otp-resend">Didn’t get the code ? Resend or Call Us</div>
+
+        <div className="otp-resend">Didn’t get the code ? <span style={{ color: 'lightblue', cursor: 'pointer'}} onClick={() => {   
+          startCounting();
+          resendOTP()
+        }}>{resend}</span></div>
       </div>
+      </Container>
     );
   }

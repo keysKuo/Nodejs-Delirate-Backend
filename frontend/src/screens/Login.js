@@ -3,7 +3,6 @@ import {
     MDBInput,
     MDBCheckbox,
     MDBBtn,
-    MDBIcon
   }
   from 'mdb-react-ui-kit';
 import { Image } from 'react-ui';
@@ -39,7 +38,7 @@ export default function LoginScreen() {
             })
             console.log(response);
 			let token = response.data.token || undefined;
-			
+			localStorage.setItem('email', email);
             if(response.data.success) {
                 navigate('/confirm_otp', {
 					state: token
@@ -93,41 +92,7 @@ export default function LoginScreen() {
 						className="d-flex justify-content-between mx-auto"
 						style={{ width: "40%" }}
 					>
-						<MDBBtn
-							tag="a"
-							color="none"
-							className="m-1"
-							style={{ color: "#1266f1" }}
-						>
-							<MDBIcon fab icon="facebook-f" size="sm" />
-						</MDBBtn>
-
-						<MDBBtn
-							tag="a"
-							color="none"
-							className="m-1"
-							style={{ color: "#1266f1" }}
-						>
-							<MDBIcon fab icon="twitter" size="sm" />
-						</MDBBtn>
-
-						<MDBBtn
-							tag="a"
-							color="none"
-							className="m-1"
-							style={{ color: "#1266f1" }}
-						>
-							<MDBIcon fab icon="google" size="sm" />
-						</MDBBtn>
-
-						<MDBBtn
-							tag="a"
-							color="none"
-							className="m-1"
-							style={{ color: "#1266f1" }}
-						>
-							<MDBIcon fab icon="github" size="sm" />
-						</MDBBtn>
+						
 					</div>
 				</div>
 			</MDBContainer>

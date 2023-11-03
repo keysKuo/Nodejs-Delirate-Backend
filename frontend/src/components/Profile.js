@@ -1,5 +1,4 @@
 import { Stack, Avatar, Text } from "react-ui";
-import { Link } from "react-router-dom";
 
 import logo from '../images/delirate-logo2.png';
 

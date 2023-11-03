@@ -19,9 +19,10 @@ a {
     width: 100vw;
     height: 80px;
     z-index: 100;
-    background: #FFEFBA;  /* fallback for old browsers */
-    /* background: -webkit-linear-gradient(to right, #FFFFFF, #FFEFBA);  
-    background: linear-gradient(to right, #FFFFFF, #FFEFBA);  */
+    background: #12c2e9;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #f64f59, #c471ed, #12c2e9);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #f64f59, #c471ed, #12c2e9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -48,16 +49,15 @@ a {
     display: block;
     padding: 6px 1.2em;
     text-decoration: none;
-    color: white;
     text-transform: uppercase;
     font-size: 17px;
-    color: black;
+    color: white;
     
 }
 
 .page-nav li a:hover {
     background-color: rgba(124,0,0,0.1);
-    color: lightcoral
+    color: lightgoldenrodyellow
 }
 
 .user-info, .user-profile {
@@ -82,10 +82,10 @@ a {
     /* border: 2px solid darkslateblue;
     background-color: darkslateblue; */
     border-radius: 10px;
-    color: rgb(220, 71, 71);
+    color: lightgoldenrodyellow;
 }
 
 .user-profile li a:hover {
-    color: black;
+    color: lightgreen;
     transition: 0.2s;
 }

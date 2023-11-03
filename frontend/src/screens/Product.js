@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import GridViews from "../components/GridViews";
 import { Container, Image } from "semantic-ui-react";
 

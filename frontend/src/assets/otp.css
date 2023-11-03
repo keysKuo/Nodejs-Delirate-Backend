@@ -1,8 +1,5 @@
 .card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
     background-color: #fff;
     padding: 20px 25px;
     border-radius: 10px;
