@@ -1,6 +1,6 @@
 import { Stack, Avatar, Text } from "react-ui";
 
-import logo from '../../images/delirate-logo2.png';
+import logo from '../../static/delirate-logo2.png';
 
 export default function Profile({ avatar_src, ...props }) {
 	
@@ -12,7 +12,7 @@ export default function Profile({ avatar_src, ...props }) {
 				src={logo}
 			/>
 			<Stack direction="vertical" >
-				<Text css={{ minWidth: '80px'}}>nKeys Kuo</Text>
+				<Text css={{ minWidth: '180px'}}>nKeys Kuo</Text>
 				<a onClick={() => localStorage.removeItem('token') } size={1} href="/login">
 					Log out
 				</a>

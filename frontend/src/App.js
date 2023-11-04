@@ -9,6 +9,7 @@ import RegisterScreen from './screens/Client/Register';
 import CreateItemScreen from './screens/Client/CreateItem';
 import AdminLayout from './screens/Admin/Admin';
 import DashboardScreen from './screens/Admin/Dashboard';
+import { ThemeProvider } from 'react-ui';
 
 const router = createBrowserRouter([
     {
@@ -32,7 +33,9 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-    return <RouterProvider router={router} />;
+    return <ThemeProvider>
+        <RouterProvider router={router} />
+    </ThemeProvider>
 }
 
 export default App;

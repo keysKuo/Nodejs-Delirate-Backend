@@ -1,15 +1,9 @@
-import {
-    MDBContainer,
-    MDBInput,
-    MDBCheckbox,
-    MDBBtn,
-  }
-  from 'mdb-react-ui-kit';
+import { MDBContainer, MDBInput, MDBCheckbox, MDBBtn } from 'mdb-react-ui-kit';
 import { Image, Alert } from 'react-ui';
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import logo1 from '../../images/delirate-logo1.png';
+import logo1 from '../../static/delirate-logo1.png';
 
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";

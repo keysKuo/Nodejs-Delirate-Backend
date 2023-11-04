@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid } from 'semantic-ui-react';
 import Reveals from './Reveals';
-import iphone from '../../images/Apple-iPhone.png';
-import knife from '../../images/knife.png';
-import pokeball from '../../images/pokeball.png';
+import iphone from '../../static/Apple-iPhone.png';
+import knife from '../../static/knife.png';
+import pokeball from '../../static/pokeball.png';
 
 const GridViews = ({ ...props }) => (
     <Grid {...props}>

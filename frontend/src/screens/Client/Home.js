@@ -2,7 +2,7 @@ import DividerPart from '../../components/Client/Divider';
 import { Container, Grid } from 'semantic-ui-react';
 import { Image } from 'react-ui';
 import TokenDashboard from '../../components/Client/TokenDashboard';
-import logo2 from '../../images/delirate-logo2.png';
+import logo2 from '../../static/delirate-logo2.png';
 
 export default function HomeScreen() {
     return (

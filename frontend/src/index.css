@@ -1,3 +1,5 @@
+@import 'perfect-scrollbar/css/perfect-scrollbar.css';
+
 @font-face {
   font-family: 'Monserrat';
   src: url('../public/Montserrat-Medium.ttf') format('woff');
@@ -7,6 +9,10 @@
 * {
   box-sizing: border-box;
   font-family: 'Monserrat', 'Consolas';
+}
+
+body {
+  background-color: white !important;
 }
 
 main { 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Image } from 'semantic-ui-react';
-import logo1 from '../../images/delirate-logo1.png';
-import banner from '../../images/banner.png';
+import logo1 from '../../static/delirate-logo1.png';
+import banner from '../../static/banner.png';
 
 const DividerPart = () => (
     <>

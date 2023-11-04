@@ -30,7 +30,7 @@ export default function Footer() {
       </section>
 
       <section className=''>
-        <MDBContainer className='text-center text-md-start mt-5'>
+        <MDBContainer style={{ maxWidth: '80%'}} className='text-left text-md-start mt-5'>
           <MDBRow className='mt-3'>
             <MDBCol md='3' lg='4' xl='3' className='mx-auto mb-4'>
               <h6 className='text-uppercase fw-bold mb-4 text-dark'>

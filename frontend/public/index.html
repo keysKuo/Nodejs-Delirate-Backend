@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" href="./delirate.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -24,11 +24,12 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>Delirate</title>
 
-    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="%PUBLIC_URL%/css/bootstrap.min.css">
   <!-- Material Design Bootstrap -->
-    <link rel="stylesheet" href="../../css/mdb.min.css">
+    <link rel="stylesheet" href="%PUBLIC_URL%/mdb/css/mdb.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -43,9 +44,14 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    
   </body>
 
-  <script type="text/javascript" src="../../js/bootstrap.js"></script>
+  <!-- <script type="text/javascript" src="../src/assets/mdb/js/bootstrap.min.js"></script> -->
   <!-- MDB core JavaScript -->
-  <script type="text/javascript" src="../../js/mdb.min.js"></script>
+  <script src="%PUBLIC_URL%/js/jquery-3.4.1.min.js"></script>
+  <script type="text/javascript" src="%PUBLIC_URL%/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="%PUBLIC_URL%/js/popper.min.js"></script>
+  <script type="text/javascript" src="%PUBLIC_URL%/js/mdb.min.js"></script>
+  
 </html>

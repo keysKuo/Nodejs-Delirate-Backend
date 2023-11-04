@@ -114,9 +114,9 @@ import { Container } from 'semantic-ui-react';
     };
 
     return (
-      <Container style={{ width: '50%', marginTop: '60px', height: '570px'}}>
-        <div className="card">
-        <div className="card-header">
+      <Container style={{ width: '50%', marginTop: '60px', height: '550px'}}>
+        <div className="card border-0">
+        <div className="card-header bg-white border-0">
           {/* <img src="./smartphone-2.svg" alt="smartphone" /> */}
           <div className="header-text">Two-Factor Verification</div>
           <div className="header-subtext">
