@@ -5,10 +5,10 @@ import {
     MDBBtn,
   }
   from 'mdb-react-ui-kit';
-import { Image } from 'react-ui';
-import { useState } from 'react';
+import { Image, Alert } from 'react-ui';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import logo1 from '../images/delirate-logo1.png';
 
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
@@ -19,6 +19,20 @@ const server_url = 'http://localhost:8080/'
 export default function LoginScreen() {
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
+	const [ msg, setMsg ] = useState('');
+	const location = useLocation();
+
+	useEffect(() => {
+		if(location.state !== null) {
+			setMsg(<p style={{color: 'lightgreen'}}>{location.state}</p>)
+		}
+
+		setTimeout(() => {
+			setMsg('')
+			location.state = null;
+		}, 3000)
+	}, [location])
+	
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -44,8 +58,11 @@ export default function LoginScreen() {
 					state: token
 				});
             }
-        } catch (error) {
-            console.log(error);
+			else {
+				setMsg(<p style={{color: '#C94E4E'}}>{response.data.msg}!</p>)
+			}
+        } catch (error) {     
+			setMsg(<p style={{color: 'lightgreen'}}>{error}!</p>)
         }
     }
 
@@ -80,11 +97,13 @@ export default function LoginScreen() {
 					<a href="!#">Forgot password?</a>
 				</div>
 
+				<Alert css={{ marginBottom: '20px'}} variant="success">{msg}</Alert>
+				
 				<MDBBtn  onClick={fetchData} className="mb-4 bg-gradient">Sign in</MDBBtn>
 
 				<div className="text-center">
 					<p>
-						Not a member? <a href="#!">Register</a>
+						Not a member? <Link to="/register">Register</Link>
 					</p>
 					<p>or sign up with:</p>
 

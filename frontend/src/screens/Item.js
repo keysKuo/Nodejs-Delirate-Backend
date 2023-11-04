@@ -1,7 +1,7 @@
 import GridViews from "../components/GridViews";
 import { Container, Image } from "semantic-ui-react";
 
-export default function ProductScreen() {
+export default function ItemScreen() {
     return (
         <>
             {/* <h1>Product Screen</h1> */}

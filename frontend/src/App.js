@@ -3,8 +3,10 @@ import HomeScreen from "./screens/Home";
 import LoginScreen from "./screens/Login";
 import RootLayout from "./screens/Root";
 import OTPVerifyScreen from "./screens/OTPVerify";
-import ProductScreen from "./screens/Product";
+import ItemScreen from "./screens/Item";
 import PricingScreen from "./screens/Pricing";
+import RegisterScreen from "./screens/Register";
+import CreateItemScreen from "./screens/CreateItem";
 
 const router = createBrowserRouter([
   {
@@ -13,9 +15,11 @@ const router = createBrowserRouter([
     children: [
       { path: '/', element: <HomeScreen /> },
       { path: '/login', element: <LoginScreen /> },
+      { path: '/register', element: <RegisterScreen /> },
       { path: '/confirm_otp', element: <OTPVerifyScreen /> },
-      { path: '/products', element: <ProductScreen /> },
+      { path: '/items', element: <ItemScreen /> },
       { path: '/pricing', element: <PricingScreen /> },
+      { path: '/create', element: <CreateItemScreen /> },
       
     ]
   }

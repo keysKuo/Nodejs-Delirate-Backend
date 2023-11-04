@@ -36,7 +36,7 @@ const TokenDashboard = () => {
                       </a>
                   </p>
                   <a
-                      href="https://api.originprotocol.com/dashboard"
+                      href="https://www.coinbase.com/how-to-buy/near-protocol"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="buy-button"

@@ -14,7 +14,7 @@ import Profile from './Profile';
 
 const nav = [
     { title: 'Home', path: '/'},
-    { title: 'Shops', path: '/products'},
+    { title: 'Shops', path: '/items'},
     { title: 'Pricing', path: '/pricing'},
     { title: 'Contact', path: '/contact'},
 ]

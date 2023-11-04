@@ -23,11 +23,36 @@ const auth = {
 async function POST_Register(req, res, next) {
     const { email, password, password_confirm, name, location, phone, role } = req.body;
 
+    if(!email.includes('@')) {
+        return res.json({
+            success: false,
+            status: 300,
+            msg: 'Email invalid',
+        });
+    }
+
+
     if (password != password_confirm) {
         return res.json({
             success: false,
             status: 300,
             msg: 'Password not same',
+        });
+    }
+
+    if(password.length < 6) {
+        return res.json({
+            success: false,
+            status: 300,
+            msg: 'Password at least 6 characters',
+        });
+    }
+
+    if(phone.length != 10) {
+        return res.json({
+            success: false,
+            status: 300,
+            msg: 'Phone number invalid',
         });
     }
 
@@ -54,7 +79,7 @@ async function POST_Register(req, res, next) {
 
         // Encode URL
         const token = jwt.sign({ id: new_account._id }, secretKey);
-        const qrcode = await QRCODE(`https://sud-delirate.onrender.com/account/verify?token=${token}`);
+        // const qrcode = await QRCODE(`https://sud-delirate.onrender.com/account/verify?token=${token}`);
 
         // Send mail verified
         const options = {
@@ -67,9 +92,13 @@ async function POST_Register(req, res, next) {
                 logo_link: process.env.LOGO_LINK || '',
                 caption: `Xác thực tài khoản từ Delirate`,
                 content: `
-                    <img src="${qrcode}" />
-                    <h5>Vui lòng quét QR code để xác thực tài khoản</h5>
+                    <p style="font-size: 15px">http://localhost:8080/account/verify?token=${token}</p>
+                    <h5>Vui lòng truy cập đường dẫn để xác thực tài khoản</h5>
                 `,
+                // `
+                //     <img src="${qrcode}" />
+                //     <h5>Vui lòng quét QR code để xác thực tài khoản</h5>
+                // `
             }),
         };
 
@@ -195,34 +224,34 @@ async function GET_Verify(req, res, next) {
 
         return await Account.findByIdAndUpdate(decoded.id, { $set: { status: 'activated' } })
             .then(async (account) => {
-                const contract = await loadContract();
+                // const contract = await loadContract();
 
-                switch (account.role) {
-                    case 'customer':
-                        let result_customer = await contract.register_customer({
-                            args: {
-                                hashed_email: account.hashed_email,
-                                name: account.name,
-                                phone: account.phone,
-                            },
-                        });
+                // switch (account.role) {
+                //     case 'customer':
+                //         let result_customer = await contract.register_customer({
+                //             args: {
+                //                 hashed_email: account.hashed_email,
+                //                 name: account.name,
+                //                 phone: account.phone,
+                //             },
+                //         });
 
-                        console.log('Customer registed ' + result_customer);
-                        break;
-                    case 'retailer':
-                        let result_retailer = await contract.register_retailer({
-                            args: {
-                                hashed_email: account.hashed_email,
-                                name: account.name,
-                                location: account.location,
-                            },
-                        });
+                //         console.log('Customer registed ' + result_customer);
+                //         break;
+                //     case 'retailer':
+                //         let result_retailer = await contract.register_retailer({
+                //             args: {
+                //                 hashed_email: account.hashed_email,
+                //                 name: account.name,
+                //                 location: account.location,
+                //             },
+                //         });
 
-                        console.log('Retailer registed ' + result_retailer);
-                        break;
-                    default:
-                        break;
-                }
+                //         console.log('Retailer registed ' + result_retailer);
+                //         break;
+                //     default:
+                //         break;
+                // }
 
                 return res.json({
                     success: true,

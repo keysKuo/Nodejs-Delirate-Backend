@@ -5,7 +5,8 @@ import session from 'express-session';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import database from './config/database.js';
-import router from './resources/index.js';
+import router from './resources/routes.js';
+import bodyParser from 'body-parser';
 dotenv.config();
 
 
@@ -14,7 +15,7 @@ const PORT = process.env.SERVER_PORT || 8080;
 database.connect();
 
 app.use(cors());
-app.use(express.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true}));
 app.use(express.static('src/public'));
 app.use(express.json());
 app.use(cookie('Origin'));
