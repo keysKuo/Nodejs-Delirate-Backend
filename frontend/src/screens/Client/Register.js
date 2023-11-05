@@ -8,7 +8,7 @@ import logo1 from '../../static/delirate-logo1.png';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
-const server_url = 'http://localhost:8080/'
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080'
 
 export default function RegisterScreen() {
     const [ name, setName ] = useState('');
@@ -47,7 +47,7 @@ export default function RegisterScreen() {
 	
     const fetchData = async () => {
         try {
-            let response = await axios.post(server_url + 'account/register', {
+            let response = await axios.post(apiUrl + '/account/register', {
                 email: email,
                 password: password,
                 password_confirm: confirmPassword,
@@ -57,7 +57,7 @@ export default function RegisterScreen() {
                 role: 'customer'
             })
 
-            console.log(response);
+            // console.log(response);
 			
             if(response.data.success) {
                 navigate('/login', {

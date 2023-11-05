@@ -1,0 +1,35 @@
+###
+
+POST http://localhost:8080/order/create
+content-type: application/json
+
+{
+    "name": "Kuo Nhan Dung",
+    "phone": "0767916592",
+    "email": "nkeyskuo124@gmail.com",
+    "address": "Illinois St",
+    "items": [
+        {
+            "info": "65478137e1d6ba0aef99d654",
+            "qty": 1,
+            "price": 120
+        },
+        {
+            "info": "6547489058155a9ff14b67f7",
+            "qty": 1,
+            "price": 50
+        }
+    ],
+    "note": "Nothing",
+    "total_cost": 170,
+    "payment_type": "Crypto"
+}
+
+###
+
+GET http://localhost:8080/order/get_order_info/QC8913976
+
+
+###
+
+GET http://localhost:8080/order/get_orders_by_customer/6547dc1d9cba75cd29986804

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "server": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "client": "npm --prefix ./frontend start",
     "build": "npm i && npm --prefix ./frontend i"

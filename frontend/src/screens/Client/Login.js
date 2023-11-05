@@ -8,24 +8,27 @@ import logo1 from '../../static/delirate-logo1.png';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const server_url = 'http://localhost:8080/';
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080'
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [msg, setMsg] = useState('');
+    const [msg, setMsg] = useState({
+        content: '',
+        color: ''
+    });
     const location = useLocation();
 
     useEffect(() => {
         if (location.state !== null) {
-            setMsg(<p style={{ color: 'lightgreen' }}>{location.state}</p>);
+            setMsg({ ...msg, content: location.state, color: '#C94E4E'});
         }
 
         setTimeout(() => {
-            setMsg('');
+            setMsg({ ...msg, content: '', color: ''});
             location.state = null;
         }, 3000);
-    }, [location]);
+    }, [location, msg]);
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -39,11 +42,11 @@ export default function LoginScreen() {
 
     const fetchData = async () => {
         try {
-            let response = await axios.post(server_url + 'account/login', {
+            let response = await axios.post(apiUrl + '/account/login', {
                 email: email,
                 password: password,
             });
-            console.log(response);
+            // console.log(response);
             let token = response.data.token || undefined;
             localStorage.setItem('email', email);
             if (response.data.success) {
@@ -51,10 +54,10 @@ export default function LoginScreen() {
                     state: token,
                 });
             } else {
-                setMsg(<p style={{ color: '#C94E4E' }}>{response.data.msg}!</p>);
+                setMsg({ ...msg, content: response.data.msg +'!', color: '#C94E4E'});
             }
         } catch (error) {
-            setMsg(<p style={{ color: 'lightgreen' }}>{error}!</p>);
+            setMsg({ ...msg, content: error + '!', color: '#C94E4E'});
         }
     };
 
@@ -84,8 +87,8 @@ export default function LoginScreen() {
                     <a href="!#">Forgot password?</a>
                 </div>
 
-                <Alert css={{ marginBottom: '20px' }} variant="success">
-                    {msg}
+                <Alert css={{ marginBottom: '20px', border: '0', color: `${msg.color}` }} variant="success">
+                    {msg.content}
                 </Alert>
 
                 <MDBBtn onClick={fetchData} className="mb-4 bg-gradient">
