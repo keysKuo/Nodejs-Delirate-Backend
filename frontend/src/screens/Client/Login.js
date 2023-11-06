@@ -21,14 +21,14 @@ export default function LoginScreen() {
 
     useEffect(() => {
         if (location.state !== null) {
-            setMsg({ ...msg, content: location.state, color: '#C94E4E'});
+            setMsg({ content: location.state, color: 'lightgreen'});
         }
 
         setTimeout(() => {
-            setMsg({ ...msg, content: '', color: ''});
+            setMsg({ content: '', color: ''});
             location.state = null;
         }, 3000);
-    }, [location, msg]);
+    }, [location]);
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);

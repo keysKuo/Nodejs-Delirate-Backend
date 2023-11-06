@@ -132,7 +132,7 @@ export default function RegisterScreen() {
                     <a href="!#">Forgot password?</a>
                 </div>
 
-                <Alert css={{ color: '#C94E4E', marginBottom: '20px'}} variant="warning">{msg}</Alert>
+                <Alert css={{ color: '#C94E4E', marginBottom: '20px', border: '0'}} >{msg}</Alert>
                 <MDBBtn onClick={fetchData} className="mb-4 bg-gradient">
                     Register
                 </MDBBtn>

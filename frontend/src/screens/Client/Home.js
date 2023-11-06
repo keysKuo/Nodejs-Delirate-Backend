@@ -37,21 +37,21 @@ export default function HomeScreen() {
                             <Image src="https://m.media-amazon.com/images/G/01/brandregistry/abpm_trh1_551122.png" />
                         </Grid.Column>
                         <Grid.Column>
-                            <h2>Verify product authenticity</h2>
+                            <h4 style={{ fontWeight: '700'}}>Verify product authenticity</h4>
                             <p>
                                 Ensure that only authentic units are shipped to customers. Whether fulfilled by us or
                                 shipped directly by selling partners, products cannot be listed on us or shipped without
                                 valid Delirate codes.
                             </p>
 
-                            <h2>Engage with customers</h2>
+                            <h4 style={{ fontWeight: '700'}}>Engage with customers</h4>
                             <p>
                                 Connect with customers post-purchase, no matter where they bought your product. The
                                 Delirate Shopping app allow customers to scan Delirate codes to confirm authenticity and
                                 access content you provide.
                             </p>
 
-                            <h2>Optimize your supply chain</h2>
+                            <h4 style={{ fontWeight: '700'}}>Optimize your supply chain</h4>
                             <p>
                                 Gain additional insights on your items at the batch or lot level, helping you identify
                                 supply chain or other issues, diagnose their root cause, implement solutions, and
