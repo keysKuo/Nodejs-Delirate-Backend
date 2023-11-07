@@ -1,9 +1,16 @@
 import dotenv from 'dotenv';
-import { hashMD5, loadContract } from '../../utils/index.js';
+import { encryptAES, decryptAES, loadContract, mailForm } from '../../utils/index.js';
 import Order from './Model.js';
 import Customer from '../Customer/Model.js';
+import {  sendMail } from 'sud-libs';
+import QRCODE from 'qrcode';
+
 dotenv.config();
 
+const auth = {
+    user: process.env.HOST_EMAIL,
+    pass: process.env.HOST_PASSWORD,
+};
 
 async function POST_CheckOut(req, res, next) {
     const { payment_type } = req.body;
@@ -79,15 +86,47 @@ async function GET_OrderInfo(req, res, next) {
     
     const { code } = req.params;
     
-    let order = await Order.findOne({ ISBN_code: code }).lean();
+    let order = await Order.findOne({ ISBN_code: code })
+        .select({ _id: 0, __v: 0 })
+        .populate({
+            path: 'items',
+            select: '-_id -__v',
+            populate: { path: 'info', select: '-item_id -_id -__v -updatedAt -createdAt' },
+        })
+        .lean();
+
+    // console.log(encrypted);
+    // let encrypted = encryptAES(code, 'nkeyskuo');
+    // let qrcode = await QRCODE.toDataURL(encrypted);
+
+    // const options = {
+    //     from: auth.user,
+    //     to: 'nkeyskuo124@gmail.com',
+    //     subject: 'Xác thực tài khoản từ Delirate',
+    //     text: `Xin chào nkeys`,
+    //     attachDataUrls: true,
+    //     html: mailForm({
+    //         logo_link: process.env.LOGO_LINK || '',
+    //         caption: `Xác thực tài khoản từ Delirate`,
+    //         content: `
+    //             <img src="${qrcode}" />
+    //         `
+    //     }),
+    // };
+
+    // sendMail(auth, options, (err) => {
+    //     if (err) console.log(err);
+    // });
 
     return res.json({
         success: true,
         status: 200,
         msg: 'Order found',
-        data: order
+        data: order,
     })
 }
+
+
 
 
 /**

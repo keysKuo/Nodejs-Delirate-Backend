@@ -64,14 +64,19 @@ pub trait Delirate {
     // fn sell_item(&mut self, item_id:ItemId) -> Item;
 }
 
-// Stucture of Item's Status
+// Stucture of Item's Delivery
+
 #[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, PartialEq, Debug)]
 #[serde(crate = "near_sdk::serde")]
-pub struct Status {
-    owner: CustomerId,
+pub struct Delivery {
+    ISBN_code: String,
+    sender: String,
+    receiver: String,
+    status: String,
     note: String,
     image: String,
     location: String,
+    signer: AccountId,
     timestamp: String
 }
 

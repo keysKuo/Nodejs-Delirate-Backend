@@ -27,9 +27,14 @@ content-type: application/json
 
 ###
 
+
 GET http://localhost:8080/order/get_order_info/QC8913976
 
 
 ###
 
 GET http://localhost:8080/order/get_orders_by_customer/6547dc1d9cba75cd29986804
+
+###
+
+GET http://localhost:8080/order/verify_origin?token=
