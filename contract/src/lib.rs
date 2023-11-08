@@ -11,34 +11,6 @@ pub type CustomerId = HashEmail;
 pub trait Delirate {
 
     /**
-     * Description: Register to be a customer
-     * Send:        Datas which contains hashed_email, name, phone
-     * Receive:     Return true if success, otherwise false
-     */
-    fn register_customer(&mut self, hashed_email: HashEmail, name: String, phone: String) -> bool;
-
-    /**
-     * Description: Get infomation of a specific customer by his/her hashed_email
-     * Send:        Datas which contains hashed_email
-     * Receive:     Return that customer's information
-     */
-    fn get_customer_info(&self, hashed_email: HashEmail) -> Customer; 
-
-    /**
-     * Description: Register to be a Retailer
-     * Send:        Datas which contains hashed_email, name, location
-     * Receive:     Return true if success, otherwise false
-     */
-    fn register_retailer(&mut self, hashed_email: HashEmail, name: String, location: String) -> bool;
-
-    /**
-     * Description: Get infomation of a specific retailer by their hashed_email
-     * Send:        Datas which contains hashed_email
-     * Receive:     Return that retailer's information
-     */
-    fn get_retailer_info(&self, hashed_email: HashEmail) -> Retailer;
-
-    /**
      * Description: Create an item on retailer's shop
      * Send:        Datas which contains model, desc, brand, origin, distributor
      * Receive:     Return true if success, otherwise false 
@@ -69,15 +41,23 @@ pub trait Delirate {
 #[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, PartialEq, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Delivery {
-    ISBN_code: String,
-    sender: String,
-    receiver: String,
+    ISBN_code: String, // FK order
+    sender: RetailerId, 
+    receiver: CustomerId,
     status: String,
     note: String,
     image: String,
     location: String,
-    signer: AccountId,
+    signer: HashEmail,
     timestamp: String
+}
+#[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, PartialEq, Debug)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Checkout {
+    ISBN_code: String, // FK order
+    payment_type: String,
+    is_completed: bool,
+    created_at: String
 }
 
 // Structure of Item
@@ -96,47 +76,24 @@ pub struct Item {
 }
 
 
-// Structure of Customer
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize)]
-#[serde(crate = "near_sdk::serde")]
-pub struct Customer {
-    pub customer_id: CustomerId,
-    pub name: String,
-    pub phone: String,
-    pub is_activated: bool
-}
-
-// Structure of Retailer
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Debug)]
-#[serde(crate = "near_sdk::serde")]
-pub struct Retailer {
-    pub retailer_id: RetailerId,
-    pub name: String,
-    pub location: String
-}
-
 // Structure of Contract
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
     pub owner: AccountId,
 
-    // Customers
-    pub all_customers: LookupMap<CustomerId, Customer>,
-    pub total_customers: u128,
-
-    // Retailers
-    pub all_retailers: LookupMap<RetailerId, Retailer>,
-    pub total_retailers: u128,
-
     // Items
     pub all_items: UnorderedMap<u128, Item>,
     pub items_by_id: LookupMap<ItemId, Item>,
     pub total_items: u128,
 
-    // Status
-    pub status_map: LookupMap<ItemId, Vec<Status>>
-
+    // Delivery
+    pub delivery_by_id: LookupMap<String, Delivery>,
+    pub total_delivery: u128,
+    
+    // Checkout
+    pub checkout_by_id: LookupMap<String, Checkout>,
+    pub total_checkout: u128,
 }
 
 

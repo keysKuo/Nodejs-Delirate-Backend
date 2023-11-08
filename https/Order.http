@@ -21,7 +21,7 @@ content-type: application/json
         }
     ],
     "note": "Nothing",
-    "total_cost": 170,
+    "total_cost": 170,`
     "payment_type": "Crypto"
 }
 
