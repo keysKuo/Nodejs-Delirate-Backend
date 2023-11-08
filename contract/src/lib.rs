@@ -7,15 +7,38 @@ pub type ItemId = String;
 pub type HashEmail = String;
 pub type RetailerId = HashEmail;
 pub type CustomerId = HashEmail;
+pub type ShipperId = HashEmail;
 
 pub trait Delirate {
+    fn register_customer(&mut self, hashed_email: HashEmail, name: String, phone: String) -> bool;
+    fn get_customer_info(&self, hashed_email: HashEmail) -> Customer;
+
+    fn register_retailer(&mut self, hashed_email: HashEmail, store_name: String, _location: String) -> bool;
+    fn get_retailer_info(&self, hashed_email: HashEmail) -> Retailer;
+
+    fn register_shipper(&mut self, hashed_email: HashEmail, license_num: String, phone: String) -> bool;
+    fn get_shipper_info(&self, hashed_email: HashEmail) -> Shipper;
+
+    fn create_delivery(
+        &mut self, 
+        _isbn_code: String, // FK order _isbn_code
+        _sender: RetailerId, 
+        _receiver: CustomerId,
+        _status: String,
+        _note: String,
+        _image: String,
+        _location: String,
+        _track_signer: HashEmail
+    ) -> bool;
+
+    
 
     /**
      * Description: Create an item on retailer's shop
      * Send:        Datas which contains model, desc, brand, origin, distributor
      * Receive:     Return true if success, otherwise false 
      */
-    fn create_item(&mut self, model: String, desc: String, brand: String, origin: String, image: String, distributor: RetailerId) -> bool;
+    fn create_item(&mut self, model: String, desc: String, brand: String, origin: String, _image: String, distributor: RetailerId) -> bool;
 
     /**
      * Description: Get infomation of a specific item by item_id
@@ -31,6 +54,7 @@ pub trait Delirate {
      */
     fn get_all_items(&self) -> Vec<Item>;
 
+
     // fn buy_item(&mut self, item_id: ItemId) -> Item;
 
     // fn sell_item(&mut self, item_id:ItemId) -> Item;
@@ -41,20 +65,42 @@ pub trait Delirate {
 #[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, PartialEq, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Delivery {
-    ISBN_code: String, // FK order
-    sender: RetailerId, 
-    receiver: CustomerId,
-    status: String,
-    note: String,
-    image: String,
-    location: String,
-    signer: HashEmail,
-    timestamp: String
+    _isbn_code: String, // FK order _isbn_code
+    _sender: RetailerId, 
+    _receiver: CustomerId,
+    _status: String,
+    _note: String,
+    _image: String,
+    _location: String,
+    _track_signer: HashEmail,
+    _timestamp: String
 }
+
+#[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, PartialEq, Debug)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Retailer {
+    store_name: String,
+    _location: String
+}
+
+#[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, PartialEq, Debug)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Customer {
+    name: String,
+    phone: String
+}
+
+#[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, PartialEq, Debug)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Shipper {
+    license_num: String,
+    phone: String
+}
+
 #[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, PartialEq, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Checkout {
-    ISBN_code: String, // FK order
+    _isbn_code: String, // FK order
     payment_type: String,
     is_completed: bool,
     created_at: String
@@ -69,10 +115,8 @@ pub struct Item {
     pub desc: String,
     pub brand: String,
     pub origin: String,
-    pub image: String,
-    pub distributor: RetailerId,
-    pub created_at: String,
-    pub updated_at: String
+    pub _image: String,
+    pub distributor: RetailerId
 }
 
 
@@ -94,6 +138,19 @@ pub struct Contract {
     // Checkout
     pub checkout_by_id: LookupMap<String, Checkout>,
     pub total_checkout: u128,
+
+    // Customers
+    pub customers_by_id: LookupMap<CustomerId, Customer>,
+    pub total_customers: u128,
+
+    // Retailers
+    pub retailers_by_id: LookupMap<RetailerId, Retailer>,
+    pub total_retailers: u128,
+
+    // Shippers
+    pub shippers_by_id: LookupMap<ShipperId, Shipper>,
+    pub total_shippers: u128
+
 }
 
 
@@ -102,42 +159,77 @@ pub struct Contract {
 #[near_bindgen]
 impl Delirate for Contract {
     fn register_customer(&mut self, hashed_email: HashEmail, name: String, phone: String) -> bool {
-        if self.all_customers.contains_key(&hashed_email) {
-            return false;
-        }
-
         let new_customer = Customer {
-            customer_id: hashed_email.clone(),
-            name, phone,
-            is_activated: true
+            name, phone
         };
 
         self.total_customers += 1;
-        self.all_customers.insert(&hashed_email, &new_customer);
+        self.customers_by_id.insert(&hashed_email, &new_customer);
         return true;
     }
 
+
     fn get_customer_info(&self, hashed_email: HashEmail) -> Customer {
-        self.all_customers.get(&hashed_email).unwrap()
+        self.customers_by_id.get(&hashed_email).unwrap()
     }
 
-    fn register_retailer(&mut self, hashed_email: HashEmail, name: String, location: String) -> bool {
+    fn register_retailer(&mut self, hashed_email: HashEmail, store_name: String, _location: String) -> bool {
         let new_retailer = Retailer {
-            retailer_id: hashed_email.clone(),
-            name, location
+            store_name, _location
         };
 
         self.total_retailers += 1;
-        self.all_retailers.insert(&hashed_email, &new_retailer);
+        self.retailers_by_id.insert(&hashed_email, &new_retailer);
         return true;
     }
 
     fn get_retailer_info(&self, hashed_email: HashEmail) -> Retailer {
-        self.all_retailers.get(&hashed_email).unwrap()
+        self.retailers_by_id.get(&hashed_email).unwrap()
     }
 
-    fn create_item(&mut self, model: String, desc: String, brand: String, origin: String, image: String, distributor: RetailerId) -> bool {
-        if !self.all_retailers.contains_key(&distributor) {
+
+    fn register_shipper(&mut self, hashed_email: HashEmail, license_num: String, phone: String) -> bool {
+        let new_shipper = Shipper {
+            license_num, phone
+        };
+
+        self.total_shippers += 1;
+        self.shippers_by_id.insert(&hashed_email, &new_shipper);
+        return true;
+    }
+
+    fn get_shipper_info(&self, hashed_email: HashEmail) -> Shipper {
+        self.shippers_by_id.get(&hashed_email).unwrap()
+    }
+
+    
+    fn create_delivery(
+        &mut self, 
+        _isbn_code: String, // FK order _isbn_code
+        _sender: RetailerId, 
+        _receiver: CustomerId,
+        _status: String,
+        _note: String,
+        _image: String,
+        _location: String,
+        _track_signer: HashEmail
+    ) -> bool {
+        if self.delivery_by_id.contains_key(&_isbn_code) {
+            return false;
+        }
+
+        let new_delivery = Delivery {
+            _isbn_code: _isbn_code.clone(), _sender, _receiver, _status, _note, _image, _location, _track_signer,
+            _timestamp: env::block_timestamp().to_string()
+        };
+
+        self.delivery_by_id.insert(&_isbn_code, &new_delivery);
+
+        return true;
+    }
+
+    fn create_item(&mut self, model: String, desc: String, brand: String, origin: String, _image: String, distributor: RetailerId) -> bool {
+        if !self.retailers_by_id.contains_key(&distributor) {
             return false;
         }
 
@@ -145,9 +237,7 @@ impl Delirate for Contract {
         let item_id = "I".to_string() + current_timestamp.as_str();
 
         let new_item = Item {
-            item_id: item_id.clone(), model, desc, brand, origin, image, distributor,
-            created_at: current_timestamp.clone(),
-            updated_at: current_timestamp.clone()
+            item_id: item_id.clone(), model, desc, brand, origin, _image, distributor
         };
 
         self.total_items += 1;
@@ -174,13 +264,13 @@ impl Delirate for Contract {
 
 
     // #[payable]
-    // fn payment(&mut self, amount: U128, receiver: AccountId) -> Promise {   
-    //     Promise::new(receiver).transfer(amount.0) 
+    // fn payment(&mut self, amount: U128, _receiver: AccountId) -> Promise {   
+    //     Promise::new(_receiver).transfer(amount.0) 
     // }
 
     // #[payable]
-    // fn payment_test(&mut self, receiver: AccountId) -> Promise {
-    //     Promise::new(receiver).transfer(env::attached_deposit()) 
+    // fn payment_test(&mut self, _receiver: AccountId) -> Promise {
+    //     Promise::new(_receiver).transfer(env::attached_deposit()) 
     // }
     
     // #[payable]
@@ -208,16 +298,20 @@ impl Contract {
         Self {
             owner: env::signer_account_id(),
 
-            all_customers: LookupMap::new(b"all customers".try_to_vec().unwrap()),
-            all_retailers: LookupMap::new(b"all retailers".try_to_vec().unwrap()),
+            customers_by_id: LookupMap::new(b"all customers".try_to_vec().unwrap()),
+            retailers_by_id: LookupMap::new(b"all retailers".try_to_vec().unwrap()),
+            shippers_by_id: LookupMap::new(b"all shippers".try_to_vec().unwrap()),
+            delivery_by_id: LookupMap::new(b"all delivery".try_to_vec().unwrap()),
+            checkout_by_id: LookupMap::new(b"all checkout".try_to_vec().unwrap()),
             all_items: UnorderedMap::new(b"all items".try_to_vec().unwrap()),
             items_by_id: LookupMap::new(b"items by id".try_to_vec().unwrap()),
 
-            status_map: LookupMap::new(b"status map".try_to_vec().unwrap()),
-
             total_customers: 0,
             total_retailers: 0,
-            total_items: 0
+            total_shippers: 0,
+            total_items: 0,
+            total_delivery: 0,
+            total_checkout: 0
         }
     }
 }
