@@ -5,7 +5,6 @@ import nearAPI from 'near-api-js'
 import fs from 'fs-extra';
 import NodeRSA from 'node-rsa';
 import { Crypt, RSA } from 'hybrid-crypto-js';
-import credentials from '../config/credentials.json' assert { type: 'json'};
 
 function gerenateKeys() {
     const key = new NodeRSA({ b: 2048 });

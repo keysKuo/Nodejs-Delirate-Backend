@@ -4,26 +4,21 @@ POST http://localhost:8080/order/create
 content-type: application/json
 
 {
-    "store_id": "6535707330ae787533e5e631",
-    "name": "Kuo Nhan Dung",
+    "store_id": "653d18ac6c4d593e8018e27d",
+    "name": "Lê Gia Phú",
     "phone": "0767916592",
-    "email": "nkeyskuo124@gmail.com",
-    "address": "Illinois St",
+    "email": "phule123@gmail.com",
+    "address": "Q4 TPHCM",
     "items": [
         {
-            "info": "65478137e1d6ba0aef99d654",
-            "qty": 1,
+            "info": "654cd14ee835494aadb67969",
+            "qty": 2,
             "price": 120
-        },
-        {
-            "info": "6547489058155a9ff14b67f7",
-            "qty": 1,
-            "price": 50
         }
     ],
-    "note": "Nothing",
-    "total_cost": 170,
-    "payment_type": "Crypto"
+    "note": "Buying pokeball",
+    "total_cost": 240,
+    "payment_type": "Banking"
 }
 
 ###
@@ -41,7 +36,7 @@ content-type: application/json
 ###
 
 
-GET http://localhost:8080/order/get_order_info/QC8913976
+GET http://localhost:8080/order/get_order_info/QC5108003
 
 
 ###
