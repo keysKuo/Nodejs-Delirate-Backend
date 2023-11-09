@@ -86,7 +86,7 @@ function hashBcrypt(password) {
 }
 
 function hashSHA256(data) {
-    return crypto.SHA256(JSON.stringify(data));
+    return crypto.SHA256(JSON.stringify(data)).toString();
 }
 
 
@@ -135,8 +135,8 @@ async function loadContract() {
         process.env.CONTRACT_ID || "dev-1697953744968-41792685867726",
         {
             // name of contract you're connecting to
-            viewMethods: ["get_customer_info", "get_retailer_info", "get_item_info", "get_all_items"], // view methods do not change state but usually return a value
-            changeMethods: ["register_customer", "register_retailer", "create_item"], // change methods modify state
+            viewMethods: ["get_customer_info", "get_retailer_info", "get_shipper_info", "get_delivery_info", "get_item_info", "get_all_items"], // view methods do not change state but usually return a value
+            changeMethods: ["register_customer", "register_retailer", "register_shipper", "create_delivery", "tracking_delivery", "create_item"], // change methods modify state
         }
     );
 

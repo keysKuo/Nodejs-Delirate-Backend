@@ -11,6 +11,7 @@ const Order = new Schema(
                 price: { type: Number, required: true, default: 0 },
             },
         ],
+        store: { type: mongoose.Types.ObjectId, ref: 'Account', required: true },
         customer: { type: mongoose.Types.ObjectId, ref: 'Customer', required: true },
         note: { type: String },
         total_cost: { type: Number, required: true, default: 0 },

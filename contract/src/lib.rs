@@ -31,7 +31,17 @@ pub trait Delirate {
         _track_signer: HashEmail
     ) -> bool;
 
-    
+    fn tracking_delivery(
+        &mut self,
+        _isbn_code: String,
+        _status: String,
+        _note: String,
+        _image: String,
+        _location: String,
+        _track_signer: String
+    ) -> bool;
+
+    fn get_delivery_info(&self, _isbn_code: String) -> Delivery;
 
     /**
      * Description: Create an item on retailer's shop
@@ -60,7 +70,7 @@ pub trait Delirate {
     // fn sell_item(&mut self, item_id:ItemId) -> Item;
 }
 
-// Stucture of Item's Delivery
+
 
 #[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, PartialEq, Debug)]
 #[serde(crate = "near_sdk::serde")]
@@ -68,6 +78,11 @@ pub struct Delivery {
     _isbn_code: String, // FK order _isbn_code
     _sender: RetailerId, 
     _receiver: CustomerId,
+    _tracking_history: Vec<Tracking>
+}
+#[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, PartialEq, Debug)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Tracking {
     _status: String,
     _note: String,
     _image: String,
@@ -218,14 +233,51 @@ impl Delirate for Contract {
             return false;
         }
 
-        let new_delivery = Delivery {
-            _isbn_code: _isbn_code.clone(), _sender, _receiver, _status, _note, _image, _location, _track_signer,
+        let mut new_delivery = Delivery {
+            _isbn_code: _isbn_code.clone(), _sender, _receiver,
+            _tracking_history: Vec::new()
+        };
+
+        let new_tracking = Tracking {
+            _status, _note, _image, _location, _track_signer,
             _timestamp: env::block_timestamp().to_string()
         };
 
-        self.delivery_by_id.insert(&_isbn_code, &new_delivery);
+        new_delivery._tracking_history.push(new_tracking);
 
+        self.delivery_by_id.insert(&_isbn_code, &new_delivery);
+        self.total_delivery += 1;
         return true;
+    }
+
+    fn tracking_delivery(
+        &mut self,
+        _isbn_code: String,
+        _status: String,
+        _note: String,
+        _image: String,
+        _location: String,
+        _track_signer: String
+    ) -> bool {
+        if !self.delivery_by_id.contains_key(&_isbn_code) {
+            return false;
+        }
+
+        let mut delivery = self.delivery_by_id.get(&_isbn_code.clone()).unwrap();
+        
+        let new_tracking = Tracking {
+            _status, _note, _image, _location, _track_signer,
+            _timestamp: env::block_timestamp().to_string()
+        };
+
+        delivery._tracking_history.push(new_tracking);
+
+        self.delivery_by_id.insert(&_isbn_code, &delivery);
+        return true;
+    }
+
+    fn get_delivery_info(&self, _isbn_code: String) -> Delivery {
+        self.delivery_by_id.get(&_isbn_code).unwrap()
     }
 
     fn create_item(&mut self, model: String, desc: String, brand: String, origin: String, _image: String, distributor: RetailerId) -> bool {

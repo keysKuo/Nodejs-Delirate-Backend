@@ -4,6 +4,7 @@ POST http://localhost:8080/order/create
 content-type: application/json
 
 {
+    "store_id": "6535707330ae787533e5e631",
     "name": "Kuo Nhan Dung",
     "phone": "0767916592",
     "email": "nkeyskuo124@gmail.com",
@@ -21,8 +22,20 @@ content-type: application/json
         }
     ],
     "note": "Nothing",
-    "total_cost": 170,`
+    "total_cost": 170,
     "payment_type": "Crypto"
+}
+
+###
+
+PUT http://localhost:8080/order/tracking_delivery/QC5108003
+content-type: application/json
+
+{
+    "status": "Transiting",
+    "note": "Warehouse transit",
+    "location": "Warehouse A2 IL 60070",
+    "track_signer": "65452dfd16312eb6d2955104"
 }
 
 ###
@@ -37,4 +50,7 @@ GET http://localhost:8080/order/get_orders_by_customer/6547dc1d9cba75cd29986804
 
 ###
 
-GET http://localhost:8080/order/verify_origin?token=
+GET http://localhost:8080/order/get_orders_by_store/6535707330ae787533e5e631
+###
+
+GET http://localhost:8080/order/verify_origin/QC5108003

@@ -1,11 +1,15 @@
 import dotenv from 'dotenv';
-import { encryptAES, decryptAES, loadContract, mailForm } from '../../utils/index.js';
+import { encryptAES, decryptAES, loadContract, mailForm, hashSHA256 } from '../../utils/index.js';
 import Order from './Model.js';
 import Customer from '../Customer/Model.js';
+import Account from '../Account/Model.js';
 import {  sendMail } from 'sud-libs';
 import QRCODE from 'qrcode';
 
 dotenv.config();
+
+const apiUrl = process.env.API_URL || 'http://localhost:8080'
+const secretKey = 'nkeyskuo';
 
 const auth = {
     user: process.env.HOST_EMAIL,
@@ -27,7 +31,7 @@ async function POST_CheckOut(req, res, next) {
  * Receive:     200 if success, otherwise fail
  */
 async function POST_CreateOrder(req, res, next) {
-    const { items, name, phone, email, address , note, total_cost, payment_type } = req.body;
+    const { store_id, items, name, phone, email, address , note, total_cost, payment_type } = req.body;
 
     try {
         let exist_customer = await Customer.findOne({
@@ -45,10 +49,20 @@ async function POST_CreateOrder(req, res, next) {
                 msg: 'Error create customer'
             })
         }
+
+        let store = await Account.findOne({_id: store_id, role: 'retailer'}).lean();
+
+        if(!store) {
+            return res.json({
+                success: false,
+                status: 404,
+                msg: 'Error not found store'
+            })
+        }
     
         let order = await new Order({
             ISBN_code: 'QC' + Math.floor(Math.random() * (9999999 - 1000000) + 1000000),
-            items, customer, note, total_cost, payment_type,
+            items, customer, note, total_cost, payment_type, store,
             status: payment_type !== 'Cash' ? 'Confirmed' : 'Requested'
         }).save();
     
@@ -60,6 +74,22 @@ async function POST_CreateOrder(req, res, next) {
             });
         }
 
+       
+        const contract = await loadContract();
+        await contract.create_delivery({
+            args: {
+                _isbn_code: order.ISBN_code, // FK order _isbn_code
+                _sender: store_id,
+                _receiver: customer._id,
+                _status: order.status,
+                _note: "Created delivery",
+                _image: "https://picsum.photos/100/100",
+                _location: "Store address",
+                _track_signer: store_id,
+            },
+        });
+        
+        console.log('pass contract');
         return res.json({
             success: true,
             status: 200,
@@ -139,6 +169,12 @@ async function GET_OrdersByCustomer(req, res, next) {
     const { customer_id } = req.params;
     
     let orders = await Order.find({ customer: customer_id }).lean();
+    orders = orders.map(order => {
+        let encrypted = encryptAES(apiUrl + `/order/get_order_info/${order.ISBN_code}`, secretKey);
+        return {
+            ...order, link: encrypted
+        }
+    })
 
     return res.json({
         success: true,
@@ -148,4 +184,109 @@ async function GET_OrdersByCustomer(req, res, next) {
     })
 }
 
-export { POST_CreateOrder, GET_OrderInfo, GET_OrdersByCustomer, POST_CheckOut }
+async function GET_VerifyOrigin(req, res, next) {
+    const { code } = req.params;
+
+    try {
+        const contract = await loadContract();
+        let delivery_info = await contract.get_delivery_info({
+            _isbn_code: code
+        });
+
+        return res.json({
+            success: true,
+            status: 200,
+            data: delivery_info
+        })
+
+    } catch (error) {
+        return res.json({
+            success: false,
+            status: 400,
+            msg: error,
+            data: {}
+        })
+    }
+
+}
+
+async function PUT_UpdateOrder(req, res, next) {
+    const { code } = req.params;
+    const { status, note, location, track_signer } = req.body;
+
+    // const file = req.file;
+    // if(!file) {
+    //     return res.json({
+    //         success: false,
+    //         status: 300,
+    //         msg: 'Image not found'
+    //     })
+    // }
+
+    try {
+        let order = await Order.findOne({ ISBN_code: code});
+        order.status = status;
+        await order.save();
+
+        const contract = await loadContract();
+        await contract.tracking_delivery({
+            args: {
+                _isbn_code: code,
+                _status: status,
+                _note: note,
+                _image: "file.filename",
+                _location: location,
+                _track_signer: track_signer,
+            },
+        });
+
+        return res.json({
+            success: true,
+            status: 200,
+            msg: 'Tracking success',
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            status: 500,
+            msg: 'Tracking fail',
+        });
+    }
+}
+
+// For Store's Admin only
+async function GET_OrdersInfoByStore(req, res, next) {
+    const { store_id } = req.params;
+
+    let orders = await Order.find({store: store_id})
+        .select({ _id: 0, __v: 0 })
+        .populate({
+            path: 'items',
+            select: '-_id -__v',
+            populate: { path: 'info', select: '-item_id -_id -__v -updatedAt -createdAt' },
+        })
+        .populate({
+            path: 'store',
+            select: 'name location createdAt'
+        })
+        .populate({
+            path: 'customer',
+        })
+        .lean();
+    
+
+    orders = orders.map(order => {
+        let encrypted = encryptAES(apiUrl + `/order/verify_origin/${order.ISBN_code}`, secretKey);
+        return {
+            ...order, link: encrypted, createdAt: order.createdAt.toLocaleString('vi-vn')
+        }
+    })
+    
+    return res.json({
+        success: true,
+        status: 200,
+        data: orders
+    })
+}
+
+export { POST_CreateOrder, GET_OrderInfo, GET_OrdersByCustomer, POST_CheckOut, GET_VerifyOrigin, PUT_UpdateOrder, GET_OrdersInfoByStore }

@@ -10,6 +10,7 @@ import CreateItemScreen from './screens/Client/CreateItem';
 import AdminLayout from './screens/Admin/Admin';
 import DashboardScreen from './screens/Admin/Dashboard';
 import { ThemeProvider } from 'react-ui';
+import OrderScreen from './screens/Admin/Order';
 
 const router = createBrowserRouter([
     {
@@ -26,9 +27,9 @@ const router = createBrowserRouter([
         ],
     },
     {
-        path: '/test',
+        path: '/admin',
         element: <AdminLayout />,
-        children: [{ path: '/test/', element: <DashboardScreen /> }],
+        children: [{ path: '/admin/dashboard', element: <OrderScreen /> }],
     },
 ]);
 
