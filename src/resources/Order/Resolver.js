@@ -197,7 +197,7 @@ async function GET_VerifyOrigin(req, res, next) {
             success: true,
             status: 200,
             data: delivery_info,
-            order: await GET_OrderInfo(req, res, next)
+            items: await Order.findOne({ ISBN_code: code}).select({items: 1})
         })
 
     } catch (error) {
