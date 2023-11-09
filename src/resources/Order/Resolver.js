@@ -193,15 +193,17 @@ async function GET_VerifyOrigin(req, res, next) {
             _isbn_code: code
         });
 
+        const items = await Order.findOne({ ISBN_code: code})
+                .select({items: 1})
+                .populate({ path: 'items', populate: 'info'})
+                .then(order => { return order.items})
+
         return res.json({
             success: true,
             status: 200,
             data: { 
                 ...delivery_info, 
-                items: await Order.findOne({ ISBN_code: code})
-                    .select({items: 1})
-                    .populate({ path: 'info'})
-                    .then(order => { return order.items})
+                items: items
             }
         })
 

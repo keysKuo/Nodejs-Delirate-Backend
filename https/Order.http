@@ -48,4 +48,4 @@ GET http://localhost:8080/order/get_orders_by_customer/6547dc1d9cba75cd29986804
 GET http://localhost:8080/order/get_orders_by_store/6535707330ae787533e5e631
 ###
 
-GET http://localhost:8080/order/verify_origin/QC5108003
+GET http://localhost:8080/order/verify_origin/QC5530648
