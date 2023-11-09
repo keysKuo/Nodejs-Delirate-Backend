@@ -13,7 +13,7 @@ export default function OrderScreen() {
         const fetchData = async () => {
             try {
                 const response = await axios.get(
-                    'http://localhost:8080/order/get_orders_by_store/6535707330ae787533e5e631',
+                    'http://localhost:8080/order/get_orders_by_store/653d18ac6c4d593e8018e27d',
                 );
                 // console.log(response.data); // Assuming your data is in response.data
                 const data = response.data;
