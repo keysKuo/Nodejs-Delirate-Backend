@@ -197,7 +197,7 @@ async function GET_VerifyOrigin(req, res, next) {
             success: true,
             status: 200,
             data: delivery_info,
-            orders: await GET_OrderInfo(req, res, next)
+            order: await GET_OrderInfo(req, res, next)
         })
 
     } catch (error) {
