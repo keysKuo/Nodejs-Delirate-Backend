@@ -196,8 +196,13 @@ async function GET_VerifyOrigin(req, res, next) {
         return res.json({
             success: true,
             status: 200,
-            data: delivery_info,
-            items: await Order.findOne({ ISBN_code: code}).select({items: 1})
+            data: { 
+                ...delivery_info, 
+                items: await Order.findOne({ ISBN_code: code})
+                    .select({items: 1})
+                    .populate({ path: 'info'})
+                    .then(order => { return order.items})
+            }
         })
 
     } catch (error) {
