@@ -13,11 +13,13 @@
 
 body {
   background-color: white !important;
+  
 }
 
 main { 
   background-color: white;
   margin-bottom: 0 !important;
+  min-height: 105vh;
 }
 
 :root {
@@ -70,6 +72,7 @@ ul {
 .form {
   width: 60%;
   margin: auto;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
 .center-box {
@@ -164,4 +167,15 @@ ul {
   width: 100%;
   
   
+}
+
+.footer {
+  background: #134E5E;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #71B280, #134E5E);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #71B280, #134E5E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+i.fa , i.fab {
+  color: #134E5E !important;
 }

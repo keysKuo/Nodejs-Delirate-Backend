@@ -111,7 +111,7 @@ export default function Footer() {
         </MDBContainer>
       </section>
 
-      <div className='text-center p-4' style={{background: 'linear-gradient(to right, #f64f59, #c471ed, #12c2e9)' }}>
+      <div className='text-center p-4 footer'>
         
         <a className='text-light fw-bold' href='https://github.com/keysKuo/'>
         © 2023 Copyright: SUD Technology

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Image, Stack } from 'react-ui';
 import { useState, useEffect } from 'react';
 import { Search } from 'semantic-ui-react';
-import logo from '../../static/delirate-logo2.png';
+import logo from '../../static/delirate_new2.png';
 // Css
 import '../../assets/header.css';
 import 'semantic-ui-css/semantic.min.css';

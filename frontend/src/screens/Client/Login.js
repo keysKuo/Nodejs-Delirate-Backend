@@ -3,7 +3,7 @@ import { Image, Alert } from 'react-ui';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import logo1 from '../../static/delirate-logo1.png';
+import logo1 from '../../static/delirate_new.png';
 
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -62,9 +62,9 @@ export default function LoginScreen() {
     };
 
     return (
-        <section className="form">
-            <Image css={{ width: '300px', marginTop: '50px' }} src={logo1} />
-            <MDBContainer className="p-3 my-5 d-flex flex-column w-50">
+        <section className="form w-50 mt-5">
+            <Image css={{ width: '350px', marginTop: '50px' }} src={logo1} />
+            <MDBContainer className="p-3 my-4 d-flex flex-column w-50">
                 <MDBInput
                     wrapperClass="mb-4"
                     label="Email address"
@@ -82,22 +82,27 @@ export default function LoginScreen() {
                     onChange={handlePasswordChange}
                 />
 
-                <div className="d-flex justify-content-between mx-3 mb-4">
+                <div className="d-flex justify-content-between mx-3 mb-3">
                     <MDBCheckbox name="flexCheck" value="" id="flexCheckDefault" label="Remember me" />
-                    <a href="!#">Forgot password?</a>
+                    <a style={{ color: '#71B280'}} href="!#">Forgot password?</a>
                 </div>
 
-                <Alert css={{ marginBottom: '20px', border: '0', color: `${msg.color}` }} variant="success">
+                <Alert css={{ marginBottom: '10px', border: '0', color: `${msg.color}` }} variant="success">
                     {msg.content}
                 </Alert>
 
-                <MDBBtn onClick={fetchData} className="mb-4 bg-gradient">
+                <MDBBtn style={{
+                    background: '#134E5E',  /* fallback for old browsers */
+                    background:'-webkit-linear-gradient(to right, #71B280, #134E5E)',  /* Chrome 10-25, Safari 5.1-6 */
+                    background: 'linear-gradient(to right, #71B280, #134E5E)', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+                    
+                }} onClick={fetchData} className="mb-3">
                     Sign in
                 </MDBBtn>
 
                 <div className="text-center">
                     <p>
-                        Not a member? <Link to="/register">Register</Link>
+                        Not a member? <Link style={{ color: '#71B280'}} to="/register">Register</Link>
                     </p>
                     <p>or sign up with:</p>
 

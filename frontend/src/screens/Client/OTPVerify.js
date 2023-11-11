@@ -108,7 +108,7 @@ export default function OTPVerifyScreen() {
     };
 
     return (
-        <Container style={{ width: '50%', marginTop: '60px', height: '550px' }}>
+        <Container style={{ width: '40%', marginTop: '60px', minHeight: '550px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px' }}>
             <div className="card border-0">
                 <div className="card-header bg-white border-0">
                     {/* <img src="./smartphone-2.svg" alt="smartphone" /> */}
