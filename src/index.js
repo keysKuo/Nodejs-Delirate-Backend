@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import database from './config/database.js';
 import router from './resources/routes.js';
 import bodyParser from 'body-parser';
+import useragent from 'express-useragent';
 dotenv.config();
 
 
@@ -15,6 +16,7 @@ const PORT = process.env.SERVER_PORT || 8080;
 database.connect();
 
 app.use(cors());
+app.use(useragent.express());
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(express.static('src/public'));
 app.use(express.json());

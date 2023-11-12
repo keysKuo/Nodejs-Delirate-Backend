@@ -281,7 +281,18 @@ async function GET_LoginQR(req, res, next) {
     const token = crypto.randomBytes(20).toString('hex');
     tokens[token] = { createdAt: Date.now() };
 
-    const loginUrl = apiUrl + `/account/login_qr?verify=true&token=${token}`;
+    const source = req.useragent.source;
+    const browser = req.useragent.browser;
+    const version = req.useragent.version;
+    const os = req.useragent.os;
+    const platform = req.useragent.platform;
+    const isMobile = req.useragent.isMobile;
+    const isTablet = req.useragent.isTablet;
+    const isDesktop = req.useragent.isDesktop;
+
+    tokens[token].agent = { source, browser, version, os, platform, isDesktop, isMobile, isTablet };
+
+    const loginUrl = apiUrl + `/account/login_qr?token=${token}`;
 
     return await QRCode.toDataURL(loginUrl, (err, url) => {
         if(err) {
@@ -302,12 +313,11 @@ async function GET_LoginQR(req, res, next) {
 }
 
 async function POST_LoginQR(req, res, next) {
-    console.log('pass');
     const { token } = req.query;
     const tokenData = tokens[token];
     const { email } = req.body;
     const expiresIn = 300;
-    console.log(token, email)
+
     if(!tokenData) {
         return res.json({
             success: false,
@@ -337,15 +347,20 @@ async function POST_LoginQR(req, res, next) {
         role: my_account.role,
     };
 
-    tokens[token].verify = true;
+    // tokens[token].verify = true;
     tokens[token].user = user_info;
     return res.json({
         success: true,
         status: 200,
-        email: email,
+        agent: tokenData.agent,
+        token: token,
         msg: 'Authenticated Login'
     })
     
+}
+
+async function POST_AnswerPermissionLoginQR(req, res, next) {
+
 }
 
 async function GET_CheckLoginQR(req, res, next) {
@@ -356,14 +371,24 @@ async function GET_CheckLoginQR(req, res, next) {
         return res.json({
             success: true,
             status: 200,
-            data: tokenData.user
+            data: tokenData.user,
+            msg: 'Login successfully'
+        })
+    }
+
+    if(tokenData.user) {
+        return res.json({
+            success: false,
+            status: 300,
+            data: tokenData.user,
+            msg: 'Waiting for permission'
         })
     }
 
     return res.json({
         success: false,
-        status: 400,
-        msg: 'Waiting for login'
+        status: 300,
+        msg: 'Waiting for scanning'
     })
 }
 
