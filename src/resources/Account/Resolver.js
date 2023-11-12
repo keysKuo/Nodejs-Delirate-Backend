@@ -381,7 +381,7 @@ async function GET_CheckLoginQR(req, res, next) {
 
     if(!tokenData) {
         return res.json({
-            success: true,
+            success: false,
             status: 400,
             msg: 'Login rejected'
         })
