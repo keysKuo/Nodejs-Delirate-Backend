@@ -284,7 +284,7 @@ async function GET_LoginQR(req, res, next) {
     const browser = req.useragent.browser;
     const os = req.useragent.os;
 
-    tokens[token].agent = { browser, os, timestamp: new Date().toLocaleString(), location: 'Ho Chi Minh City' };
+    tokens[token].agent = { browser, os, timestamp: new Date().toLocaleString('vi-vn'), location: 'Ho Chi Minh City' };
 
     const loginUrl = apiUrl + `/account/login_qr?token=${token}`;
 
@@ -391,7 +391,7 @@ async function GET_CheckLoginQR(req, res, next) {
     if(tokenData.user) {
         return res.json({
             success: false,
-            status: 300,
+            status: 301,
             data: tokenData.user,
             msg: 'Waiting for permission'
         })
