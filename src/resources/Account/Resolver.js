@@ -353,8 +353,26 @@ async function POST_LoginQR(req, res, next) {
     
 }
 
-async function POST_AnswerPermissionLoginQR(req, res, next) {
+async function GET_AnswerPermissionLoginQR(req, res, next) {
+    const { token, verify } = req.query;
 
+    if(verify === 'true') {
+        tokens[token].verify = true;
+        return res.json({
+            success: true,
+            status: 200,
+            token: token,
+            msg: 'Login verified'
+        })
+    }
+    else {
+        delete tokens[token];
+        return res.json({
+            success: true,
+            status: 400,
+            msg: 'Login rejected'
+        })
+    }
 }
 
 async function GET_CheckLoginQR(req, res, next) {
@@ -386,4 +404,4 @@ async function GET_CheckLoginQR(req, res, next) {
     })
 }
 
-export { POST_Register, POST_Login, GET_Verify, GET_LoginQR, POST_LoginQR, GET_CheckLoginQR };
+export { POST_Register, POST_Login, GET_Verify, GET_LoginQR, POST_LoginQR, GET_CheckLoginQR, GET_AnswerPermissionLoginQR };
