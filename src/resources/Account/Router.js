@@ -23,4 +23,5 @@ router.get('/login_qr', GET_LoginQR);
 router.post('/login_qr', POST_LoginQR);
 router.get('/checklogin_qr', GET_CheckLoginQR);
 router.get('/admit_permission', GET_AnswerPermissionLoginQR);
+
 export default router;
