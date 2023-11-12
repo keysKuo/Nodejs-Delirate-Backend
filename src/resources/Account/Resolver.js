@@ -366,6 +366,7 @@ async function GET_AnswerPermissionLoginQR(req, res, next) {
         })
     }
     else {
+        delete tokens[token];
         return res.json({
             success: false,
             status: 400,
