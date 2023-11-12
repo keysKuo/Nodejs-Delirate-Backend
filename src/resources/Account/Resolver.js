@@ -281,16 +281,10 @@ async function GET_LoginQR(req, res, next) {
     const token = crypto.randomBytes(20).toString('hex');
     tokens[token] = { createdAt: Date.now() };
 
-    const source = req.useragent.source;
     const browser = req.useragent.browser;
-    const version = req.useragent.version;
     const os = req.useragent.os;
-    const platform = req.useragent.platform;
-    const isMobile = req.useragent.isMobile;
-    const isTablet = req.useragent.isTablet;
-    const isDesktop = req.useragent.isDesktop;
 
-    tokens[token].agent = { source, browser, version, os, platform, isDesktop, isMobile, isTablet };
+    tokens[token].agent = { browser, os, timestamp: Date.now().toLocaleString('vi-vn'), location: 'Ho Chi Minh City' };
 
     const loginUrl = apiUrl + `/account/login_qr?token=${token}`;
 
