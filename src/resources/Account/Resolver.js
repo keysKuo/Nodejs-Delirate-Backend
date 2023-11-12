@@ -379,6 +379,14 @@ async function GET_CheckLoginQR(req, res, next) {
     const { token } = req.query;
     const tokenData = tokens[token];
 
+    if(!tokenData) {
+        return res.json({
+            success: true,
+            status: 400,
+            msg: 'Login rejected'
+        })
+    }
+
     if(tokenData.verify) {
         return res.json({
             success: true,
