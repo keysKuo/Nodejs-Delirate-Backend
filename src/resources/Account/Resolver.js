@@ -302,11 +302,12 @@ async function GET_LoginQR(req, res, next) {
 }
 
 async function POST_LoginQR(req, res, next) {
+    console.log('pass');
     const { token } = req.query;
     const tokenData = tokens[token];
     const { email } = req.body;
     const expiresIn = 300;
-
+    console.log(token, email)
     if(!tokenData) {
         return res.json({
             success: false,
