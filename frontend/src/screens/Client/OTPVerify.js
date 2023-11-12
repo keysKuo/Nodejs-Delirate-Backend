@@ -79,13 +79,13 @@ export default function OTPVerifyScreen() {
                 code: otp.join(''),
             });
 
-            const data = response.data;
+            const result = response.data;
             // console.log(response);
-            if (data.success) {
-                localStorage.setItem('token', token);
+            if (result.success) {
+                localStorage.setItem('user', result.data);
                 window.location.href = '/';
             } else {
-                setMsg(data.msg + '!');
+                setMsg(result.msg + '!');
             }
         } catch (err) {
             // console.log('Error: ' + err);

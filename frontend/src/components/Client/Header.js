@@ -22,9 +22,9 @@ export default function Header() {
     const [isLogin, setIsLogin] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
 
-        if (token) {
+        if (user) {
             setIsLogin(
                 <>
                     <Search placeholder="Search..." />

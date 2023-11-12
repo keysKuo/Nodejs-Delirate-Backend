@@ -21,10 +21,10 @@ export default function QRLogin({ msg, qrcode, ...props }) {
                 </div>
             </div>
 
-            <Alert css={{ marginBottom: '10px', border: '0', color: `${msg.color}` }} variant="success">
+            <Alert css={{ border: '0', color: `${msg.color}` }} variant="success">
                             {msg.content}
                         </Alert>
-            <div style={{ color: '#134E5E'}} className="py-3">
+            <div style={{ color: '#134E5E'}} className="py-2">
                 <Text>Use Scanner from Delirate app to login</Text>
             </div>
         </>

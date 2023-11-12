@@ -132,7 +132,7 @@ async function POST_Register(req, res, next) {
  */
 async function POST_Login(req, res, next) {
     const { email, password } = req.body;
-    const { verify } = req.query;
+
     const my_account = await Account.findOne({ email }).lean();
 
     if (!my_account) {
@@ -168,14 +168,6 @@ async function POST_Login(req, res, next) {
         phone: my_account.phone,
         role: my_account.role,
     };
-
-    if(verify) {
-        return res.json({
-            success: true,
-            status: 200,
-            data: user_info
-        })
-    }
 
     try {
         let otp = await new OTP({
@@ -303,6 +295,7 @@ async function GET_LoginQR(req, res, next) {
         return res.json({
             success: true,
             status: 200,
+            token: token,
             data: url
         })
     })
@@ -311,7 +304,8 @@ async function GET_LoginQR(req, res, next) {
 async function POST_LoginQR(req, res, next) {
     const { token } = req.query;
     const tokenData = tokens[token];
-    const expiresIn = 60;
+    const { email } = req.body;
+    const expiresIn = 300;
 
     if(!tokenData) {
         return res.json({
@@ -331,7 +325,45 @@ async function POST_LoginQR(req, res, next) {
         })
     }
 
-    return POST_Login(req, res, next);
+    let my_account = await Account.findOne({email}).lean();
+
+    const user_info = {
+        email: my_account.email,
+        hashed_email: my_account.hashed_email,
+        name: my_account.name,
+        location: my_account.location,
+        phone: my_account.phone,
+        role: my_account.role,
+    };
+
+    tokens[token].verify = true;
+    tokens[token].user = user_info;
+    return res.json({
+        success: true,
+        status: 200,
+        email: email,
+        msg: 'Authenticated Login'
+    })
+    
 }
 
-export { POST_Register, POST_Login, GET_Verify, GET_LoginQR, POST_LoginQR };
+async function GET_CheckLoginQR(req, res, next) {
+    const { token } = req.query;
+    const tokenData = tokens[token];
+
+    if(tokenData.verify) {
+        return res.json({
+            success: true,
+            status: 200,
+            data: tokenData.user
+        })
+    }
+
+    return res.json({
+        success: false,
+        status: 400,
+        msg: 'Waiting for login'
+    })
+}
+
+export { POST_Register, POST_Login, GET_Verify, GET_LoginQR, POST_LoginQR, GET_CheckLoginQR };

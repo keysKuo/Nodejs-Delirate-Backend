@@ -13,7 +13,7 @@ export default function Profile({ avatar_src, ...props }) {
 			/>
 			<Stack direction="vertical" >
 				<Text css={{ minWidth: '180px'}}>nKeys Kuo</Text>
-				<a onClick={() => localStorage.removeItem('token') } size={1} href="/login">
+				<a onClick={() => localStorage.removeItem('user') } size={1} href="/login">
 					Log out
 				</a>
 			</Stack>

@@ -20,10 +20,10 @@ export default function LoginScreen() {
         color: ''
     });
     const [ activeItem, setActiveItem ] = useState('With Password');
-
-    const handleItemClick = (name) => setActiveItem(name)
+    const [ qrcode, setQrcode ] = useState('');
+    const [ sessionToken, setSessionToken ] = useState('');
     const location = useLocation();
-
+    
     useEffect(() => {
         if (location.state !== null) {
             setMsg({ content: location.state, color: 'lightgreen'});
@@ -33,11 +33,19 @@ export default function LoginScreen() {
             setMsg({ content: '', color: ''});
             location.state = null;
         }, 3000);
-    }, [location]);
+
+        if(qrcode && sessionToken) {
+            fetchDataCheckQR();
+        }
+    }, [location, qrcode, sessionToken]);
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
     };
+
+    const handleItemClick = (name) => {
+        setActiveItem(name);
+    }
 
     const handlePasswordChange = (event) => {
         setPassword(event.target.value);
@@ -66,13 +74,14 @@ export default function LoginScreen() {
         }
     };
 
-    const [ qrcode, setQrcode ] = useState('');
+    
     const fetchDataQR = async () => {
         try {
             const response = await axios.get(apiUrl + '/account/login_qr');
             const result = response.data;
 
             if(result.success) {
+                setSessionToken(result.token)
                 setQrcode(result.data);
             }else {
                 setMsg({ ...msg, content: result.msg +'!', color: '#C94E4E'});
@@ -83,14 +92,33 @@ export default function LoginScreen() {
         }
     }
 
+    const fetchDataCheckQR = async () => {
+        try {
+            const response = await axios.get(apiUrl + `/account/checklogin_qr?token=${sessionToken}`);
+            const result = response.data;
+
+            if(result.success) {
+                localStorage.setItem('user', result.data);
+                window.location.href = '/';
+            }
+            else {
+                console.log(result);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <section className="form w-50 mt-5">
-            <Menu color="lightgreen" widths={2}>
+            <Menu widths={2}>
                 <Menu.Item
                     className={`${activeItem === 'With Password' ? 'bg-x' : ''}`}
                     name="With Password"
                     active={activeItem === 'With Password'}
                     onClick={() => {
+                        setQrcode('');
+                        setSessionToken('');
                         handleItemClick('With Password');
                     }}
                 />
