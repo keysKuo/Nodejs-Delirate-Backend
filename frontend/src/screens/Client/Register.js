@@ -4,6 +4,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import logo1 from '../../static/delirate_new.png';
+import { Menu } from 'semantic-ui-react';
 
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -74,7 +75,14 @@ export default function RegisterScreen() {
 
     return (
         <section className="form w-50 mt-5">
-            <Image css={{ width: '350px', marginTop: '20px' }} src={logo1} />
+             <Menu widths={1}>
+                <Menu.Item
+                    className='bg-x' 
+                    name="Register"
+                />
+                
+            </Menu>
+            <Image css={{ width: '350px', marginTop: '10px' }} src={logo1} />
             <MDBContainer className="p-3 d-flex flex-column w-50">
                 <MDBInput
                     wrapperClass="mb-4"

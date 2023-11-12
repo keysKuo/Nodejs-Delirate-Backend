@@ -2,11 +2,15 @@ import Account from './Model.js';
 import OTP from '../OTP/Model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { sendMail, QRCODE } from 'sud-libs';
+import crypto from 'crypto';
+import { sendMail } from 'sud-libs';
+import QRCode from 'qrcode';
 import { mailForm, hashBcrypt, hashMD5, loadContract } from '../../utils/index.js';
 import dotenv from 'dotenv';
+
 dotenv.config();
 
+const apiUrl = process.env.API_URL || 'http://localhost:8080';
 const secretKey = process.env.SECRET_KEY || 'nkeyskuo';
 
 const auth = {
@@ -128,7 +132,7 @@ async function POST_Register(req, res, next) {
  */
 async function POST_Login(req, res, next) {
     const { email, password } = req.body;
-
+    const { verify } = req.query;
     const my_account = await Account.findOne({ email }).lean();
 
     if (!my_account) {
@@ -164,6 +168,14 @@ async function POST_Login(req, res, next) {
         phone: my_account.phone,
         role: my_account.role,
     };
+
+    if(verify) {
+        return res.json({
+            success: true,
+            status: 200,
+            data: user_info
+        })
+    }
 
     try {
         let otp = await new OTP({
@@ -269,4 +281,57 @@ async function GET_Verify(req, res, next) {
     });
 }
 
-export { POST_Register, POST_Login, GET_Verify };
+// <----------------------------- LOGIN QRCODE ------------------------------>
+
+let tokens = [];
+
+async function GET_LoginQR(req, res, next) {
+    const token = crypto.randomBytes(20).toString('hex');
+    tokens[token] = { createdAt: Date.now() };
+
+    const loginUrl = apiUrl + `/account/login_qr?verify=true&token=${token}`;
+
+    return await QRCode.toDataURL(loginUrl, (err, url) => {
+        if(err) {
+            return res.json({
+                success: false,
+                status: 500,
+                msg: 'Error generating QRCODE'
+            })
+        }
+
+        return res.json({
+            success: true,
+            status: 200,
+            data: url
+        })
+    })
+}
+
+async function POST_LoginQR(req, res, next) {
+    const { token } = req.query;
+    const tokenData = tokens[token];
+    const expiresIn = 60;
+
+    if(!tokenData) {
+        return res.json({
+            success: false,
+            status: 400,
+            msg: 'Invalid token'
+        })
+    }
+
+    const timeElapsed = (Date.now() - tokenData.createdAt) / 1000;
+    if(timeElapsed > expiresIn) {
+        delete tokens[token];
+        return res.json({
+            success: false,
+            status: 400,
+            msg: 'Token expired'
+        })
+    }
+
+    return POST_Login(req, res, next);
+}
+
+export { POST_Register, POST_Login, GET_Verify, GET_LoginQR, POST_LoginQR };

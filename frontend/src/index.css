@@ -88,6 +88,11 @@ ul {
   background-color: #FFEFBA;
 }
 
+.bg-process {
+  background-image: url(./static/process.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+}
 
 .product-image-container {
   position: relative;
@@ -169,10 +174,11 @@ ul {
   
 }
 
-.footer {
-  background: #134E5E;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #71B280, #134E5E);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #71B280, #134E5E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+.footer, .bg-x {
+  background: #134E5E !important;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #71B280, #134E5E) !important;  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #71B280, #134E5E) !important;
+color: #fff !important;  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 }
 
