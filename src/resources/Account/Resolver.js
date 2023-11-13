@@ -83,7 +83,7 @@ async function POST_Register(req, res, next) {
 
         // Encode URL
         const token = jwt.sign({ id: new_account._id }, secretKey);
-        // const qrcode = await QRCODE(`https://sud-delirate.onrender.com/account/verify?token=${token}`);
+        const qrcode = await QRCode.toDataURL(`${apiUrl}/account/verify?token=${token}`);
 
         // Send mail verified
         const options = {
@@ -96,8 +96,8 @@ async function POST_Register(req, res, next) {
                 logo_link: process.env.LOGO_LINK || '',
                 caption: `Xác thực tài khoản từ Delirate`,
                 content: `
-                    <p style="font-size: 15px">http://localhost:8080/account/verify?token=${token}</p>
-                    <h5>Vui lòng truy cập đường dẫn để xác thực tài khoản</h5>
+                    <img src="${qrcode}" />
+                    <h5>Vui lòng quét QR code để xác thực tài khoản</h5>
                 `,
                 // `
                 //     <img src="${qrcode}" />
