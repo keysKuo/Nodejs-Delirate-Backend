@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sendMail } from 'sud-libs';
 import QRCode from 'qrcode';
-import { mailForm, hashBcrypt, hashMD5, loadContract } from '../../utils/index.js';
+import { mailForm, hashBcrypt, hashMD5, loadContract, hashSHA256 } from '../../utils/index.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -77,7 +77,7 @@ async function POST_Register(req, res, next) {
             location,
             phone,
             role,
-            hashed_email: hashMD5(email),
+            hashed_email: hashSHA256(email),
             password: hashBcrypt(password),
         }).save();
 
