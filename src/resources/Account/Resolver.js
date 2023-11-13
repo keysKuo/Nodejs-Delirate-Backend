@@ -25,9 +25,16 @@ const auth = {
  * Receive:     200 if success, otherwise fail
  */
 async function POST_Register(req, res, next) {
-    const { email, password, password_confirm, name, location, phone, role } = req.body;
+    const { email, password, password_confirm, name, location, phone, role, folder } = req.body;
 
     const file = req.file;
+    if (!file) {
+        return res.json({
+            success: false,
+            status: 300,
+            msg: 'Image file not found',
+        });
+    }
 
     if(!email.includes('@')) {
         return res.json({
@@ -36,7 +43,6 @@ async function POST_Register(req, res, next) {
             msg: 'Email invalid',
         });
     }
-
 
     if (password != password_confirm) {
         return res.json({
@@ -81,7 +87,8 @@ async function POST_Register(req, res, next) {
             role,
             hashed_email: hashSHA256(email),
             password: hashBcrypt(password),
-        }).save();
+            avatar: folder + "/" + file.filename
+        }).save(); 
 
         // Encode URL
         const token = jwt.sign({ id: new_account._id }, secretKey);

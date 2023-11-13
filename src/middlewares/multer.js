@@ -3,7 +3,7 @@ import fileapis from './fileapis.js';
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const { folder } = req.body;
+        const folder = req.headers['folder-path'];
         
         fileapis.createSync('./src/public/uploads' + folder, err => {
             console.log(err);
@@ -11,10 +11,17 @@ const storage = multer.diskStorage({
 
         cb(null, './src/public/uploads' + folder);
     },
-
+    
     filename: (req, file, cb) => {
+        const folder = req.headers['folder-path'];
         let ext = file.originalname.substring(file.originalname.lastIndexOf('.'));
-        cb(null, Date.now() + ext);
+        let filename = Date.now() + ext;
+        
+        if(folder.endsWith('avatar')) {
+            filename = 'avatar' + ext;
+        }
+
+        cb(null, filename);
     }
 })
 
