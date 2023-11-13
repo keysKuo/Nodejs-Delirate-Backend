@@ -320,7 +320,7 @@ async function POST_LoginQR(req, res, next) {
     const { token } = req.query;
     const tokenData = tokens[token];
     const { email } = req.body;
-    const expiresIn = 300;
+    const expiresIn = 30;
 
     if(!tokenData) {
         return res.json({
@@ -395,6 +395,16 @@ async function GET_CheckLoginQR(req, res, next) {
             success: false,
             status: 400,
             msg: 'Login rejected'
+        })
+    }
+
+    const timeElapsed = (Date.now() - tokenData.createdAt) / 1000;
+    if(timeElapsed > expiresIn) {
+        delete tokens[token];
+        return res.json({
+            success: false,
+            status: 404,
+            msg: 'Token expired'
         })
     }
 
