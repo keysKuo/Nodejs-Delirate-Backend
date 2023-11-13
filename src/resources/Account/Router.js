@@ -1,4 +1,5 @@
 import { POST_ConfirmOTP, POST_ResendOTP } from '../OTP/Resolver.js';
+import upload from '../../middlewares/multer.js';
 import {
     GET_AnswerPermissionLoginQR,
     GET_CheckLoginQR,
@@ -13,7 +14,7 @@ import express from 'express';
 
 const router = express.Router();
 
-router.post('/register', POST_Register);
+router.post('/register', upload.single('file'), POST_Register);
 router.post('/login', POST_Login);
 router.get('/verify', GET_Verify);
 router.post('/confirm_otp', POST_ConfirmOTP);

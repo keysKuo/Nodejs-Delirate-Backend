@@ -3,18 +3,13 @@ import fileapis from './fileapis.js';
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // const { hashed_email } = req.user;
+        const { folder } = req.body;
         
-        const hashed_email = '4cdaa0e01110e3d64916df5d2bc044cc';
-
-        let path = './src/public/uploads/' + hashed_email;
-        
-        fileapis.createSync(path, err => {
+        fileapis.createSync('./src/public/uploads' + folder, err => {
             console.log(err);
         });
 
-        req.folder = path;
-        cb(null, path);
+        cb(null, './src/public/uploads' + folder);
     },
 
     filename: (req, file, cb) => {

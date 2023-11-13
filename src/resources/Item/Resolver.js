@@ -12,10 +12,10 @@ dotenv.config();
  */
 async function POST_CreateItem(req, res, next) {
     
-    const { model, desc, brand, origin, distributor } = req.body;
+    const { model, desc, brand, origin, distributor, folder } = req.body;
     
     // const { hashed_email, role } = req.user;
-    const hashed_email = '4cdaa0e01110e3d64916df5d2bc044cc'; //nkeyskuo124@gmail.com
+    // const hashed_email = '4cdaa0e01110e3d64916df5d2bc044cc'; //nkeyskuo124@gmail.com
     const file = req.file;
 
     if (!file) {
@@ -29,8 +29,8 @@ async function POST_CreateItem(req, res, next) {
     try {
         let new_item = await new Item({
             item_id: "J" + Math.floor(Math.random() * (9999999 - 1000000) + 1000000),
-            model, desc, brand, origin, distributor: hashed_email,
-            image: file.filename
+            model, desc, brand, origin, distributor,
+            image: folder + "/" + file.filename
         }).save();
 
         // Smart Contract

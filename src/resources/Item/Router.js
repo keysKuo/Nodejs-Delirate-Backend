@@ -5,7 +5,7 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const base_url = `D:/Study/Blockchain/NEAR-MERN-Delirate-Blockchain2023/`;
+
 const router = express.Router();
 
 router.get('/get_item_info/:id', GET_ItemInfo);

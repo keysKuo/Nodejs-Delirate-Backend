@@ -5,6 +5,7 @@ const Account = new Schema(
 	{
 		email: { type: String, required: true, unique: true },
 		hashed_email: { type: String, required: true},
+		avatar: { type: String },
 		password: { type: String, required: true },
 		name: { type: String, required: true },
 		location: { type: String, required: true },

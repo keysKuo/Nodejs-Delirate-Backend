@@ -27,6 +27,8 @@ const auth = {
 async function POST_Register(req, res, next) {
     const { email, password, password_confirm, name, location, phone, role } = req.body;
 
+    const file = req.file;
+
     if(!email.includes('@')) {
         return res.json({
             success: false,
