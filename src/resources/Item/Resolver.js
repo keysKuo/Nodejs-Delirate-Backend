@@ -63,6 +63,25 @@ async function POST_CreateItem(req, res, next) {
     }
 }
 
+async function DELETE_item(req, res, next) {
+    const { id } = req.params;
+
+    let item = Item.findByIdAndDelete(id);
+    if(item) {
+        return res.json({
+            success: true,
+            status: 200,
+            data: item,
+            msg: 'Deleted item'
+        })
+    }
+
+    return res.json({
+        success: false,
+        status: 500,
+        msg: 'Delete item fail'
+    })
+}
 
 /**
  * Description: Get info of specific item
@@ -128,4 +147,4 @@ async function GET_AllItems(req, res, next) {
 }
 
 
-export { GET_AllItems, GET_ItemInfo, POST_CreateItem };
+export { GET_AllItems, GET_ItemInfo, POST_CreateItem, DELETE_item };
