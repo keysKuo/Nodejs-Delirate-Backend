@@ -12,6 +12,6 @@ router.get('/get_item_info/:id', GET_ItemInfo);
 router.get('/get_all_items', GET_AllItems);
 
 router.post('/create', upload.single('file'),  POST_CreateItem);
-router.post('/delete/:id',  DELETE_item);
+router.delete('/delete/:id',  DELETE_item);
 
 export default router

@@ -75,11 +75,13 @@ async function DELETE_item(req, res, next) {
         let item = Item.findByIdAndDelete(id);
         if(item) {
             fileapis.deleteSync('./src/public/uploads' + item.image, (err) => {
-                return res.json({
-                    success: false,
-                    status: 500,
-                    msg: 'Delete item fail: ' + err
-                })
+                if(err) {
+                    return res.json({
+                        success: false,
+                        status: 500,
+                        msg: 'Delete item fail: ' + err
+                    })
+                }
             })
         }
         return res.json({
