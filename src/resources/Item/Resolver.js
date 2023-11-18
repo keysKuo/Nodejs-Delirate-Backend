@@ -2,8 +2,8 @@ import dotenv from 'dotenv';
 import { hashMD5, loadContract } from '../../utils/index.js';
 import Item from './Model.js';
 import Account from '../Account/Model.js';
+import fileapis from '../../middlewares/fileapis.js';
 dotenv.config();
-
 
 /**
  * Description: Create new Item for Store
@@ -12,12 +12,11 @@ dotenv.config();
  * Receive:     200 if success, otherwise fail
  */
 async function POST_CreateItem(req, res, next) {
-    
     const { model, sku, price, desc, brand, origin, distributor, folder } = req.body;
-    
+
     // const { hashed_email, role } = req.user;
     // const hashed_email = '4cdaa0e01110e3d64916df5d2bc044cc'; //nkeyskuo124@gmail.com
-    let store_id = await Account.findOne({hashed_email: distributor}).select({_id: 1});
+    let store_id = await Account.findOne({ hashed_email: distributor }).select({ _id: 1 });
     const file = req.file;
 
     if (!file) {
@@ -30,8 +29,14 @@ async function POST_CreateItem(req, res, next) {
 
     try {
         let new_item = await new Item({
-            model, sku, price, desc, brand, origin, distributor: store_id,
-            image: folder + "/" + file.filename
+            model,
+            sku,
+            price,
+            desc,
+            brand,
+            origin,
+            distributor: store_id,
+            image: folder + '/' + file.filename,
         }).save();
 
         // Smart Contract
@@ -52,7 +57,7 @@ async function POST_CreateItem(req, res, next) {
             success: true,
             status: 200,
             msg: 'Item created',
-            data: new_item
+            data: new_item,
         });
     } catch (error) {
         return res.json({
@@ -66,21 +71,30 @@ async function POST_CreateItem(req, res, next) {
 async function DELETE_item(req, res, next) {
     const { id } = req.params;
 
-    let item = Item.findByIdAndDelete(id);
-    if(item) {
+    try {
+        let item = Item.findByIdAndDelete(id);
+        if(item) {
+            fileapis.deleteSync('./src/public/uploads' + item.image, (err) => {
+                return res.json({
+                    success: false,
+                    status: 500,
+                    msg: 'Delete item fail: ' + err
+                })
+            })
+        }
         return res.json({
             success: true,
             status: 200,
             data: item,
-            msg: 'Deleted item'
-        })
-    }
-
-    return res.json({
+            msg: 'Deleted item',
+        });
+    } catch (error) {
+        return res.json({
         success: false,
         status: 500,
-        msg: 'Delete item fail'
+        msg: 'Delete item fail: ' + error
     })
+    }
 }
 
 /**
@@ -92,9 +106,9 @@ async function DELETE_item(req, res, next) {
 async function GET_ItemInfo(req, res, next) {
     try {
         const { id } = req.params;
-        
+
         let item = Item.findById(id).lean();
-        
+
         // Smart contract
         // const contract = await loadContract();
         // let item = await contract.get_item_info({
@@ -115,7 +129,6 @@ async function GET_ItemInfo(req, res, next) {
     }
 }
 
-
 /**
  * Description: Get All Items that match the filter
  * Request:     GET /item/get_all_items
@@ -123,19 +136,18 @@ async function GET_ItemInfo(req, res, next) {
  * Receive:     200 + items if success , otherwise fail
  */
 async function GET_AllItems(req, res, next) {
-    
     try {
-        let filter = {...req.query};
+        let filter = { ...req.query };
         let items = await Item.find(filter).lean();
 
-        // Smart Contract 
+        // Smart Contract
         // const contract = await loadContract();
         // let items = await contract.get_all_items();
 
         return res.json({
             success: true,
             status: 200,
-            data: items
+            data: items,
         });
     } catch (error) {
         return res.json({
@@ -145,6 +157,5 @@ async function GET_AllItems(req, res, next) {
         });
     }
 }
-
 
 export { GET_AllItems, GET_ItemInfo, POST_CreateItem, DELETE_item };
