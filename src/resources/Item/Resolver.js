@@ -28,8 +28,7 @@ async function POST_CreateItem(req, res, next) {
 
     try {
         let new_item = await new Item({
-            item_id: "J" + Math.floor(Math.random() * (9999999 - 1000000) + 1000000),
-            model, desc, brand, origin, distributor,
+            model, sku, price, desc, brand, origin, distributor,
             image: folder + "/" + file.filename
         }).save();
 

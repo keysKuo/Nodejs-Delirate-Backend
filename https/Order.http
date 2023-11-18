@@ -4,11 +4,11 @@ POST http://localhost:8080/order/create
 content-type: application/json
 
 {
-    "store_id": "653d18ac6c4d593e8018e27d",
-    "name": "Lê Gia Phú",
-    "phone": "0767916592",
-    "email": "phule123@gmail.com",
-    "address": "Q4 TPHCM",
+    "store_id": "6551ddc1e14e43842d85eb8e",
+    "name": "Quách Nhân Dũng",
+    "phone": "0524958245",
+    "email": "sheldon1247@gmail.com",
+    "address": "Thạnh Lộc 16 Q12 TP Hồ Chí Minh",
     "items": [
         {
             "info": "654cd14ee835494aadb67969",
