@@ -16,7 +16,7 @@ async function POST_CreateItem(req, res, next) {
 
     // const { hashed_email, role } = req.user;
     // const hashed_email = '4cdaa0e01110e3d64916df5d2bc044cc'; //nkeyskuo124@gmail.com
-    let store_id = await Account.findOne({ hashed_email: distributor }).select({ _id: 1 });
+    let store = await Account.findOne({ hashed_email: distributor }).select({ _id: 1 });
     const file = req.file;
 
     if (!file) {
@@ -35,7 +35,7 @@ async function POST_CreateItem(req, res, next) {
             desc,
             brand,
             origin,
-            distributor: store_id,
+            distributor: store._id,
             image: folder + '/' + file.filename,
         }).save();
 
