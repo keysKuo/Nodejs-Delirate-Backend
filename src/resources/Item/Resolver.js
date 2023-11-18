@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { hashMD5, loadContract } from '../../utils/index.js';
 import Item from './Model.js';
+import Account from '../Account/Model.js';
 dotenv.config();
 
 
@@ -12,10 +13,11 @@ dotenv.config();
  */
 async function POST_CreateItem(req, res, next) {
     
-    const { model, desc, brand, origin, distributor, folder } = req.body;
+    const { model, sku, price, desc, brand, origin, distributor, folder } = req.body;
     
     // const { hashed_email, role } = req.user;
     // const hashed_email = '4cdaa0e01110e3d64916df5d2bc044cc'; //nkeyskuo124@gmail.com
+    let store_id = await Account.findOne({hashed_email}).select({_id: 1});
     const file = req.file;
 
     if (!file) {
@@ -28,7 +30,7 @@ async function POST_CreateItem(req, res, next) {
 
     try {
         let new_item = await new Item({
-            model, sku, price, desc, brand, origin, distributor,
+            model, sku, price, desc, brand, origin, distributor: store_id,
             image: folder + "/" + file.filename
         }).save();
 
