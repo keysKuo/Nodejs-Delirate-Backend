@@ -72,7 +72,7 @@ async function DELETE_item(req, res, next) {
     const { id } = req.params;
 
     try {
-        let item = Item.findByIdAndDelete(id);
+        let item = await Item.findByIdAndDelete(id);
         if(item) {
             fileapis.deleteSync('./src/public/uploads' + item.image, (err) => {
                 if(err) {
