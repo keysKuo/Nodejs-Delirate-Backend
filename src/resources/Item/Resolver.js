@@ -109,7 +109,7 @@ async function GET_ItemInfo(req, res, next) {
     try {
         const { id } = req.params;
 
-        let item = Item.findById(id).lean();
+        let item = await Item.findById(id).lean();
 
         // Smart contract
         // const contract = await loadContract();

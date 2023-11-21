@@ -10,7 +10,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const apiUrl = process.env.API_URL || 'http://localhost:8080';
+const apiUrl = process.env.API_URL || 'http://192.168.1.7:8080';
 const secretKey = process.env.SECRET_KEY || 'nkeyskuo';
 
 const auth = {

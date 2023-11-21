@@ -4,7 +4,7 @@ import fileapis from './fileapis.js';
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const folder = req.headers['folder-path'];
-        
+        console.log(folder);
         fileapis.createSync('./src/public/uploads' + folder, err => {
             console.log(err);
         });
