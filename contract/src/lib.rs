@@ -64,6 +64,7 @@ pub trait Delirate {
      */
     fn get_all_items(&self) -> Vec<Item>;
 
+    fn payment_test(&mut self, _receiver: AccountId, _order_id: String, _amount: Balance) -> Promise;
 
     // fn buy_item(&mut self, item_id: ItemId) -> Item;
 
@@ -320,10 +321,10 @@ impl Delirate for Contract {
     //     Promise::new(_receiver).transfer(amount.0) 
     // }
 
-    // #[payable]
-    // fn payment_test(&mut self, _receiver: AccountId) -> Promise {
-    //     Promise::new(_receiver).transfer(env::attached_deposit()) 
-    // }
+    #[payable]
+    fn payment_test(&mut self, _receiver: AccountId, _order_id: String, _amount: Balance) -> Promise {
+        Promise::new(_receiver).transfer(env::attached_deposit()) 
+    }
     
     // #[payable]
     // fn pay_for_job(&mut self, job_id: JobId) -> u128 {

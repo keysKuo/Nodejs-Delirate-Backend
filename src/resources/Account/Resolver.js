@@ -1,5 +1,7 @@
 import Account from './Model.js';
 import OTP from '../OTP/Model.js';
+import Order from '../Order/Model.js';
+
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
@@ -36,7 +38,7 @@ async function POST_Register(req, res, next) {
         });
     }
 
-    if(!email.includes('@')) {
+    if (!email.includes('@')) {
         return res.json({
             success: false,
             status: 300,
@@ -52,7 +54,7 @@ async function POST_Register(req, res, next) {
         });
     }
 
-    if(password.length < 6) {
+    if (password.length < 6) {
         return res.json({
             success: false,
             status: 300,
@@ -60,7 +62,7 @@ async function POST_Register(req, res, next) {
         });
     }
 
-    if(phone.length != 10) {
+    if (phone.length != 10) {
         return res.json({
             success: false,
             status: 300,
@@ -87,8 +89,8 @@ async function POST_Register(req, res, next) {
             role,
             hashed_email: hashSHA256(email),
             password: hashBcrypt(password),
-            avatar: folder + "/" + file.filename
-        }).save(); 
+            avatar: folder + '/' + file.filename,
+        }).save();
 
         // Encode URL
         const token = jwt.sign({ id: new_account._id }, secretKey);
@@ -173,7 +175,7 @@ async function POST_Login(req, res, next) {
         email: my_account.email,
         hashed_email: my_account.hashed_email,
         name: my_account.name,
-        avatar: apiUrl + '/uploads' +  my_account.avatar,
+        avatar: apiUrl + '/uploads' + my_account.avatar,
         location: my_account.location,
         phone: my_account.phone,
         role: my_account.role,
@@ -185,7 +187,7 @@ async function POST_Login(req, res, next) {
             code: Math.floor(Math.random() * (9999 - 1000) + 1000),
         }).save();
         const token = jwt.sign({ user: user_info, code: otp.code }, secretKey);
-    
+
         const options = {
             from: auth.user,
             to: my_account.email,
@@ -197,11 +199,11 @@ async function POST_Login(req, res, next) {
                 `,
             }),
         };
-    
+
         sendMail(auth, options, (err) => {
             if (err) console.log(err);
         });
-    
+
         return res.json({
             success: true,
             status: 200,
@@ -215,7 +217,6 @@ async function POST_Login(req, res, next) {
             msg: 'OTP cannot send',
         });
     }
-    
 }
 
 /**
@@ -299,21 +300,21 @@ async function GET_LoginQR(req, res, next) {
     const loginUrl = apiUrl + `/account/login_qr?token=${token}`;
 
     return await QRCode.toDataURL(loginUrl, (err, url) => {
-        if(err) {
+        if (err) {
             return res.json({
                 success: false,
                 status: 500,
-                msg: 'Error generating QRCODE'
-            })
+                msg: 'Error generating QRCODE',
+            });
         }
 
         return res.json({
             success: true,
             status: 200,
             token: token,
-            data: url
-        })
-    })
+            data: url,
+        });
+    });
 }
 
 async function POST_LoginQR(req, res, next) {
@@ -322,31 +323,31 @@ async function POST_LoginQR(req, res, next) {
     const { email } = req.body;
     const expiresIn = 300;
 
-    if(!tokenData) {
+    if (!tokenData) {
         return res.json({
             success: false,
             status: 400,
-            msg: 'Invalid token'
-        })
+            msg: 'Invalid token',
+        });
     }
 
     const timeElapsed = (Date.now() - tokenData.createdAt) / 1000;
-    if(timeElapsed > expiresIn) {
+    if (timeElapsed > expiresIn) {
         delete tokens[token];
         return res.json({
             success: false,
             status: 400,
-            msg: 'Token expired'
-        })
+            msg: 'Token expired',
+        });
     }
 
-    let my_account = await Account.findOne({email}).lean();
+    let my_account = await Account.findOne({ email }).lean();
 
     const user_info = {
         email: my_account.email,
         hashed_email: my_account.hashed_email,
         name: my_account.name,
-        avatar: apiUrl + '/uploads' +  my_account.avatar,
+        avatar: apiUrl + '/uploads' + my_account.avatar,
         location: my_account.location,
         phone: my_account.phone,
         role: my_account.role,
@@ -359,30 +360,28 @@ async function POST_LoginQR(req, res, next) {
         status: 200,
         agent: tokenData.agent,
         token: token,
-        msg: 'Authenticated Login'
-    })
-    
+        msg: 'Authenticated Login',
+    });
 }
 
 async function GET_AnswerPermissionLoginQR(req, res, next) {
     const { token, verify } = req.query;
 
-    if(verify === 'true') {
+    if (verify === 'true') {
         tokens[token].verify = true;
         return res.json({
             success: true,
             status: 200,
             token: token,
-            msg: 'Login verified'
-        })
-    }
-    else {
+            msg: 'Login verified',
+        });
+    } else {
         delete tokens[token];
         return res.json({
             success: false,
             status: 400,
-            msg: 'Login rejected'
-        })
+            msg: 'Login rejected',
+        });
     }
 }
 
@@ -390,38 +389,119 @@ async function GET_CheckLoginQR(req, res, next) {
     const { token } = req.query;
     const tokenData = tokens[token];
 
-    if(!tokenData) {
+    if (!tokenData) {
         return res.json({
             success: false,
             status: 400,
-            msg: 'Login rejected'
-        })
+            msg: 'Login rejected',
+        });
     }
 
-
-    if(tokenData.verify) {
+    if (tokenData.verify) {
         return res.json({
             success: true,
             status: 200,
             data: tokenData.user,
-            msg: 'Login successfully'
-        })
+            msg: 'Login successfully',
+        });
     }
 
-    if(tokenData.user) {
+    if (tokenData.user) {
         return res.json({
             success: false,
             status: 301,
             data: tokenData.user,
-            msg: 'Waiting for permission'
-        })
+            msg: 'Waiting for permission',
+        });
     }
 
     return res.json({
         success: false,
         status: 300,
-        msg: 'Waiting for scanning'
-    })
+        msg: 'Waiting for scanning',
+    });
 }
 
-export { POST_Register, POST_Login, GET_Verify, GET_LoginQR, POST_LoginQR, GET_CheckLoginQR, GET_AnswerPermissionLoginQR };
+async function GET_NearPaymentQR(req, res, next) {
+    const { receiver, order_id, amount } = req.query;
+    const token = crypto.randomBytes(20).toString('hex');
+    tokens[token] = { createdAt: Date.now() };
+
+    const nearPaymentUrl = `${apiUrl}/near-payment?receiver=${receiver}&order_id=${order_id}&amount=${amount}&token=${token}`;
+
+    return await QRCode.toDataURL(nearPaymentUrl, (err, url) => {
+        if (err) {
+            return res.json({
+                success: false,
+                status: 500,
+                msg: 'Error generating QRCODE',
+            });
+        }
+
+        return res.json({
+            success: true,
+            status: 200,
+            token: token,
+            order_id: order_id,
+            url: url,
+        });
+    });
+}
+
+async function POST_NearPaymentQR(req, res, next) {
+    const { receiver, order_id, amount, token } = req.query;
+    const tokenData = tokens[token];
+    const expiresIn = 300;
+
+    if (!tokenData) {
+        return res.json({
+            success: false,
+            status: 400,
+            msg: 'Invalid token',
+        });
+    }
+
+    const timeElapsed = (Date.now() - tokenData.createdAt) / 1000;
+    if (timeElapsed > expiresIn) {
+        delete tokens[token];
+        return res.json({
+            success: false,
+            status: 400,
+            msg: 'Token expired',
+        });
+    }
+
+    const contract = await loadContract();
+    console.log('pass load contract');
+    await contract.payment_test(
+        {
+            _receiver: receiver,
+            _order_id: order_id,
+            _amount: parseInt(amount),
+        },
+        '300000000000000', // attached GAS (optional)
+        '2000000000000000000000000', // attached deposit in yoctoNEAR (optional)
+    );
+    console.log('pass payment near');
+    
+    
+    await Order.findByIdAndUpdate(order_id, { $set: {status: 'Paid'} } );
+    // delete tokens[token]
+    return res.json({
+        success: true,
+        status: 200,
+        msg: 'Payment near success',
+    });
+}
+
+export {
+    GET_NearPaymentQR,
+    POST_NearPaymentQR,
+    POST_Register,
+    POST_Login,
+    GET_Verify,
+    GET_LoginQR,
+    POST_LoginQR,
+    GET_CheckLoginQR,
+    GET_AnswerPermissionLoginQR,
+};

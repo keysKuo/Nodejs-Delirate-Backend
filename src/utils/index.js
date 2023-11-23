@@ -135,7 +135,7 @@ async function loadContract() {
         {
             // name of contract you're connecting to
             viewMethods: ["get_customer_info", "get_retailer_info", "get_shipper_info", "get_delivery_info", "get_item_info", "get_all_items"], // view methods do not change state but usually return a value
-            changeMethods: ["register_customer", "register_retailer", "register_shipper", "create_delivery", "tracking_delivery", "create_item"], // change methods modify state
+            changeMethods: ["payment_test","register_customer", "register_retailer", "register_shipper", "create_delivery", "tracking_delivery", "create_item"], // change methods modify state
         }
     );
 

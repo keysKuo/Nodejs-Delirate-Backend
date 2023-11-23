@@ -14,11 +14,11 @@ const Order = new Schema(
         store: { type: mongoose.Types.ObjectId, ref: 'Account', required: true },
         customer: { type: mongoose.Types.ObjectId, ref: 'Customer', required: true },
         note: { type: String },
-        total_cost: { type: Number, required: true, default: 0 },
+        total_price: { type: Number, required: true, default: 0 },
         status: {
             type: String,
             required: true,
-            enum: ['Requested', 'Confirmed', 'Transiting', 'Shipping', 'Finished'],
+            enum: ['Requested', 'Confirmed', 'Paid', 'Transiting', 'Shipping', 'Finished'],
             default: 'Requested'
         },
         payment_type: { type: String, required: true, enum: ['Cash', 'Banking', 'Crypto'] },

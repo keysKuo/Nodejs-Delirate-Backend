@@ -27,12 +27,12 @@ async function POST_CheckOut(req, res, next) {
 /**
  * Description: Create a new Order
  * Request:     POST /order/create
- * Send:        JSON data which contains items, name, phone, email, address , note, total_cost, payment_type
+ * Send:        JSON data which contains items, name, phone, email, address , note, total_price, payment_type
  * Receive:     200 if success, otherwise fail
  */
 async function POST_CreateOrder(req, res, next) {
-    const { store_id, items, name, phone, email, address , note, total_cost, payment_type } = req.body;
-
+    const { store_id, items, name, phone, email, address , note, total_price, payment_type } = req.body;
+    
     try {
         let exist_customer = await Customer.findOne({
             email
@@ -59,10 +59,11 @@ async function POST_CreateOrder(req, res, next) {
                 msg: 'Error not found store'
             })
         }
-    
+
         let order = await new Order({
             ISBN_code: 'QC' + Math.floor(Math.random() * (9999999 - 1000000) + 1000000),
-            items, customer, note, total_cost, payment_type, store,
+            items,
+            customer, note, total_price, payment_type, store,
             status: payment_type !== 'Cash' ? 'Confirmed' : 'Requested'
         }).save();
     
@@ -233,7 +234,7 @@ async function PUT_UpdateOrder(req, res, next) {
 
     try {
         let order = await Order.findOne({ ISBN_code: code});
-        order.status = status;
+        order.status = status || order.status;
         await order.save();
 
         const contract = await loadContract();
