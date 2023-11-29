@@ -91,12 +91,14 @@ async function POST_CreateOrder(req, res, next) {
         });
         
         console.log('pass contract');
-        return res.json({
-            success: true,
-            status: 200,
-            msg: 'Order Created',
-            data: order
-        })
+        req.order_id = order._id;
+        next();
+        // return res.json({
+        //     success: true,
+        //     status: 200,
+        //     msg: 'Order Created',
+        //     data: order
+        // })
     } 
     catch (error) {
         return res.json({

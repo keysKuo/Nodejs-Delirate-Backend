@@ -1,10 +1,11 @@
 import { GET_OrderInfo, POST_CreateOrder, GET_OrdersByCustomer, PUT_UpdateOrder, GET_OrdersInfoByStore, GET_VerifyOrigin } from "./Resolver.js";
 import express from 'express';
 import Order from './Model.js';
+import { POST_CreateCheckout } from "../Checkout/Resolver.js";
 
 const router = express.Router();
 
-router.post('/create', POST_CreateOrder);
+router.post('/create', POST_CreateOrder, POST_CreateCheckout);
 router.get('/get_order_info/:code', GET_OrderInfo);
 router.get('/get_orders_by_customer/:customer_id', GET_OrdersByCustomer);
 router.get('/get_orders_by_store/:store_id', GET_OrdersInfoByStore);

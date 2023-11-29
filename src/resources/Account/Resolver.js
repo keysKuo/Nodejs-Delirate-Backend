@@ -1,6 +1,7 @@
 import Account from './Model.js';
 import OTP from '../OTP/Model.js';
 import Order from '../Order/Model.js';
+import Checkout from '../Checkout/Model.js';
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -9,6 +10,7 @@ import { sendMail } from 'sud-libs';
 import QRCode from 'qrcode';
 import { mailForm, hashBcrypt, hashMD5, loadContract, hashSHA256 } from '../../utils/index.js';
 import dotenv from 'dotenv';
+import createStripeSession from '../../../payments/stripe.js';
 
 dotenv.config();
 
@@ -438,6 +440,7 @@ async function GET_NearPaymentQR(req, res, next) {
             });
         }
 
+        console.log('6.Near Payment Created');
         return res.json({
             success: true,
             status: 200,
@@ -448,55 +451,114 @@ async function GET_NearPaymentQR(req, res, next) {
     });
 }
 
-async function POST_NearPaymentQR(req, res, next) {
+async function PUT_NearPaymentQR(req, res, next) {
     const { receiver, order_id, amount, token } = req.query;
     const tokenData = tokens[token];
     const expiresIn = 300;
 
-    if (!tokenData) {
-        return res.json({
-            success: false,
-            status: 400,
-            msg: 'Invalid token',
-        });
-    }
+    try {
+        if (!tokenData) {
+            return res.json({
+                success: false,
+                status: 400,
+                msg: 'Invalid token',
+            });
+        }
 
-    const timeElapsed = (Date.now() - tokenData.createdAt) / 1000;
-    if (timeElapsed > expiresIn) {
+        const timeElapsed = (Date.now() - tokenData.createdAt) / 1000;
+        if (timeElapsed > expiresIn) {
+            delete tokens[token];
+            return res.json({
+                success: false,
+                status: 400,
+                msg: 'Token expired',
+            });
+        }
+
+        const contract = await loadContract();
+        await contract.payment_test(
+            {
+                _receiver: receiver,
+                _order_id: order_id,
+                _amount: parseInt(amount),
+            },
+            '300000000000000', // attached GAS (optional)
+            '2000000000000000000000000', // attached deposit in yoctoNEAR (optional)
+        );
+
+        await Order.findByIdAndUpdate(order_id, { $set: { status: 'Paid' } });
+        await Checkout.findOneAndUpdate({ order: order_id }, { $set: { status: 'Completed' } });
+
+        console.log('7.Near Payment Success');
         delete tokens[token];
         return res.json({
+            success: true,
+            status: 200,
+            msg: 'Near Payment Success',
+        });
+    } catch (error) {
+        return res.json({
             success: false,
-            status: 400,
-            msg: 'Token expired',
+            status: 500,
+            msg: 'Near Payment Fail',
+        });
+    }
+}
+
+async function GET_StripePaymentGateway(req, res, next) {
+    const { order_id } = req.query;
+
+    if (stripe_url) {
+        return res.json({
+            success: true,
+            status: 200,
+            msg: 'Order Created',
+            order_id: order_id,
+            url: stripe_url,
         });
     }
 
-    const contract = await loadContract();
-    console.log('pass load contract');
-    await contract.payment_test(
-        {
-            _receiver: receiver,
-            _order_id: order_id,
-            _amount: parseInt(amount),
-        },
-        '300000000000000', // attached GAS (optional)
-        '2000000000000000000000000', // attached deposit in yoctoNEAR (optional)
-    );
-    console.log('pass payment near');
-    
-    
-    await Order.findByIdAndUpdate(order_id, { $set: {status: 'Paid'} } );
-    // delete tokens[token]
     return res.json({
-        success: true,
-        status: 200,
-        msg: 'Payment near success',
+        success: false,
+        status: 500,
+        msg: 'Error while creating stripe payment',
+    });
+}
+
+async function PUT_StripePaymentGateWay(req, res, next) {
+    const { order_id } = req.query;
+    let order = await Order.findOneAndUpdate({ _id: order_id, status: 'Confirmed' }, { $set: { status: 'Paid' } });
+
+    if (order) {
+        let checkout = await Checkout.findOneAndUpdate({ order: order }, { $set: { status: 'Completed' } });
+        if (checkout) {
+            console.log('7.Stripe Payment Success');
+            return res.json({
+                success: true,
+                status: 200,
+                msg: 'Stripe Payment Success',
+            });
+        }
+
+        return res.json({
+            success: false,
+            status: 404,
+            msg: 'Stripe Payment Fail',
+        });
+    }
+
+    return res.json({
+        success: false,
+        status: 404,
+        msg: 'Stripe unpaid',
     });
 }
 
 export {
+    GET_StripePaymentGateway,
+    PUT_StripePaymentGateWay,
     GET_NearPaymentQR,
-    POST_NearPaymentQR,
+    PUT_NearPaymentQR,
     POST_Register,
     POST_Login,
     GET_Verify,
