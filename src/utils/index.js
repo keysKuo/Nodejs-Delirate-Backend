@@ -29,7 +29,7 @@ dotenv.config()
 
 const { keyStores, connect, Contract, KeyPair } = nearAPI;
 
-const ACCOUNT_ID = process.env.ACCOUNT_ID || "nkeyskuo147.testnet"
+const ACCOUNT_ID = process.env.ACCOUNT_ID || "nkeyskuo186.testnet"
 const NETWORK_ID = process.env.NETWORK_ID || "testnet";
 
 const KEY_STORE = new keyStores.InMemoryKeyStore();

@@ -1,10 +1,11 @@
 import stripeAPI from 'stripe';
 import dotenv from 'dotenv';
-import Order from '../src/resources/Order/Model.js';
+import Order from '../resources/Order/Model.js';
+
 
 dotenv.config();
 
-let stripeGateway = stripeAPI(process.env.stripe_api);
+let stripeGateway = stripeAPI(process.env.STRIPE_API_KEY);
 let clientUrl = process.env.CLIENT_URL || '';
 
 async function createStripeSession(order_id) {

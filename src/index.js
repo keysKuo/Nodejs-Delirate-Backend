@@ -62,37 +62,6 @@ async function HandleInfoCustomer(name, email, phone, address) {
     return customer;
 }
 
-// async function HandleStripeAPI(items, order_id, clientUrl) {
-//     const lineItems = items.map((item) => {
-//         const unitAmount = item.price * 100;
-
-//         return {
-//             price_data: {
-//                 currency: 'usd',
-//                 product_data: {
-//                     name: item.model,
-//                     images: ['https://react.semantic-ui.com/images/wireframe/square-image.png'],
-//                 },
-//                 unit_amount: unitAmount,
-//             },
-//             quantity: item.quantity,
-//         };
-//     });
-
-//     const session = await stripeGateway.checkout.sessions.create({
-//         payment_method_types: ['card'],
-//         mode: 'payment',
-//         success_url: `${clientUrl}/stripe-success?order_id=${order_id}`,
-//         cancel_url: `${clientUrl}/fail`,
-//         line_items: lineItems,
-//         //  Asking address in Stripe
-//         billing_address_collection: 'required',
-//     });
-//     console.log('6.Stripe Payment Created');
-
-//     return session.url;
-// }
-
 app.post('/checkout', async (req, res) => {
     const { store_id, name, email, phone, address, note, items, total_price, payment_type } = req.body;
     console.log('--------------- Calling Checkout API... -----------------');
@@ -163,7 +132,7 @@ app.post('/checkout', async (req, res) => {
             });
         }
         console.log('4.Checkout Created');
-
+        
         // Create new delivery by contract
         const contract = await loadContract();
         await contract.create_delivery({
@@ -194,7 +163,7 @@ app.post('/checkout', async (req, res) => {
             return res.redirect(`/stripe-payment?order_id=${order._id}`)
         } 
         else if (payment_type === 'Crypto') {
-            return res.redirect(`/near-payment?receiver=nkeyskuo196.testnet&order_id=${order._id}&amount=2`);
+            return res.redirect(`/near-payment?receiver=nkeyskuo196.testnet&order_id=${order._id}&amount=${order.total_price * 0.9}`);
         }
 
         return res.json({

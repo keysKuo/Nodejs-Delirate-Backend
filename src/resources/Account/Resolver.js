@@ -10,7 +10,7 @@ import { sendMail } from 'sud-libs';
 import QRCode from 'qrcode';
 import { mailForm, hashBcrypt, hashMD5, loadContract, hashSHA256 } from '../../utils/index.js';
 import dotenv from 'dotenv';
-import createStripeSession from '../../../payments/stripe.js';
+import createStripeSession from '../../payments/stripe.js';
 
 dotenv.config();
 
@@ -454,7 +454,7 @@ async function GET_NearPaymentQR(req, res, next) {
 async function PUT_NearPaymentQR(req, res, next) {
     const { receiver, order_id, amount, token } = req.query;
     const tokenData = tokens[token];
-    const expiresIn = 300;
+    const expiresIn = 900;
 
     try {
         if (!tokenData) {
@@ -507,6 +507,8 @@ async function PUT_NearPaymentQR(req, res, next) {
 
 async function GET_StripePaymentGateway(req, res, next) {
     const { order_id } = req.query;
+
+    const stripe_url = await createStripeSession(order_id)
 
     if (stripe_url) {
         return res.json({
