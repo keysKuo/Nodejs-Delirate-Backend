@@ -2,6 +2,7 @@ import Account from './Model.js';
 import OTP from '../OTP/Model.js';
 import Order from '../Order/Model.js';
 import Checkout from '../Checkout/Model.js';
+import Customer from '../Customer/Model.js';
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -163,6 +164,9 @@ async function POST_Login(req, res, next) {
         });
     }
 
+    let customer_id = await Customer.findOne({email: my_account.email})
+        .then(customer => customer._id)
+    
     // Generate OTP and Send OTP
     const user_info = {
         email: my_account.email,
@@ -172,6 +176,7 @@ async function POST_Login(req, res, next) {
         location: my_account.location,
         phone: my_account.phone,
         role: my_account.role,
+        customer_id: customer_id
     };
 
     try {

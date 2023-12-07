@@ -8,6 +8,7 @@ import database from './config/database.js';
 import router from './resources/routes.js';
 import bodyParser from 'body-parser';
 import useragent from 'express-useragent';
+import morgan from 'morgan';
 dotenv.config();
 
 import Customer from './resources/Customer/Model.js';
@@ -29,6 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('src/public'));
 app.use(express.json());
 app.use(cookie('Origin'));
+app.use(morgan('dev'));
 app.use(
     session({
         secret: 'nkeyskuo',
@@ -41,7 +43,6 @@ app.use(
 router(app);
 
 // const stripeGateway = stripeAPI('sk_test_51OEv6lLqoSvXr7Wa201ij0m5aWuB2CjGg3g32szb8grLYHwPShQFSyeeroV8n8ajzFVrJxBPB2FekYFq4AYROscc00nCuvAKGi');
-let stripeGateway = stripeAPI(process.env.stripe_api);
 let clientUrl = process.env.CLIENT_URL || 'http://192.168.1.7:3000';
 
 

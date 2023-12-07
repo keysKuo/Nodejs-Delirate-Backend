@@ -7,7 +7,7 @@ import { loadContract } from '../../utils/index.js';
 
 dotenv.config();
 
-const apiUrl = process.env.API_URL || 'http://192.168.1.7:8080'
+const apiUrl = process.env.API_URL || 'http://192.168.1.7:8080';
 const secretKey = 'nkeyskuo';
 
 const auth = {
@@ -18,7 +18,7 @@ const auth = {
 async function POST_CheckOut(req, res, next) {
     const { payment_type } = req.body;
 
-    if(payment_type === 'Cash') {
+    if (payment_type === 'Cash') {
         next();
     }
 }
@@ -30,43 +30,52 @@ async function POST_CheckOut(req, res, next) {
  * Receive:     200 if success, otherwise fail
  */
 async function POST_CreateOrder(req, res, next) {
-    const { store_id, items, name, phone, email, address , note, total_price, payment_type } = req.body;
-    
+    const { store_id, items, name, phone, email, address, note, total_price, payment_type } = req.body;
+
     try {
         let exist_customer = await Customer.findOne({
-            email
-        })
-        
-        let customer = exist_customer || await new Customer({
-            name, phone, email, address
-        }).save();
-    
-        if(!customer) {
+            email,
+        });
+
+        let customer =
+            exist_customer ||
+            (await new Customer({
+                name,
+                phone,
+                email,
+                address,
+            }).save());
+
+        if (!customer) {
             return res.json({
                 success: false,
                 status: 400,
-                msg: 'Error create customer'
-            })
+                msg: 'Error create customer',
+            });
         }
 
-        let store = await Account.findOne({_id: store_id, role: 'retailer'}).lean();
+        let store = await Account.findOne({ _id: store_id, role: 'retailer' }).lean();
 
-        if(!store) {
+        if (!store) {
             return res.json({
                 success: false,
                 status: 404,
-                msg: 'Error not found store'
-            })
+                msg: 'Error not found store',
+            });
         }
 
         let order = await new Order({
             ISBN_code: 'QC' + Math.floor(Math.random() * (9999999 - 1000000) + 1000000),
             items,
-            customer, note, total_price, payment_type, store,
-            status: payment_type !== 'Cash' ? 'Confirmed' : 'Requested'
+            customer,
+            note,
+            total_price,
+            payment_type,
+            store,
+            status: payment_type !== 'Cash' ? 'Confirmed' : 'Requested',
         }).save();
-    
-        if(!order) {
+
+        if (!order) {
             return res.json({
                 success: false,
                 status: 400,
@@ -74,7 +83,6 @@ async function POST_CreateOrder(req, res, next) {
             });
         }
 
-       
         const contract = await loadContract();
         await contract.create_delivery({
             args: {
@@ -82,13 +90,13 @@ async function POST_CreateOrder(req, res, next) {
                 _sender: store_id,
                 _receiver: customer._id,
                 _status: order.status,
-                _note: "Created delivery",
-                _image: "https://picsum.photos/100/100",
-                _location: "Store address",
+                _note: 'Created delivery',
+                _image: 'https://picsum.photos/100/100',
+                _location: 'Store address',
                 _track_signer: store_id,
             },
         });
-        
+
         console.log('pass contract');
         req.order_id = order._id;
         next();
@@ -98,13 +106,12 @@ async function POST_CreateOrder(req, res, next) {
         //     msg: 'Order Created',
         //     data: order
         // })
-    } 
-    catch (error) {
+    } catch (error) {
         return res.json({
             success: false,
             status: 500,
-            msg: error
-        })
+            msg: error,
+        });
     }
 }
 
@@ -115,9 +122,8 @@ async function POST_CreateOrder(req, res, next) {
  * Receive:     200 if success, otherwise fail
  */
 async function GET_OrderInfo(req, res, next) {
-    
     const { code } = req.params;
-    
+
     let order = await Order.findOne({ ISBN_code: code })
         .select({ _id: 0, __v: 0 })
         .populate({
@@ -155,11 +161,8 @@ async function GET_OrderInfo(req, res, next) {
         status: 200,
         msg: 'Order found',
         data: order,
-    })
+    });
 }
-
-
-
 
 /**
  * Description: Get orders by customer
@@ -169,23 +172,40 @@ async function GET_OrderInfo(req, res, next) {
  */
 async function GET_OrdersByCustomer(req, res, next) {
     const { customer_id } = req.params;
-    
+    console.log(customer_id);
     let orders = await Order.find({ customer: customer_id })
-    .sort({created_at: -1})
-    .lean();
-    orders = orders.map(order => {
+        .select({ _id: 0, __v: 0 })
+        .populate({
+            path: 'items',
+            select: '-_id -__v',
+            populate: { path: 'info', select: '-item_id -_id -__v -updatedAt -createdAt' },
+        })
+        .populate({
+            path: 'store',
+            select: 'name location createdAt',
+        })
+        .populate({
+            path: 'customer',
+        })
+        .sort({ createdAt: -1 })
+        .lean();
+
+    orders = orders.map((order) => {
         let encrypted = encryptAES(apiUrl + `/order/get_order_info/${order.ISBN_code}`, secretKey);
         return {
-            ...order, link: encrypted
-        }
-    })
+            ...order,
+            link: encrypted,
+            createdDate: order.createdAt.toLocaleDateString('vi-vn'),
+            createdDateTime: order.createdAt.toLocaleString('vi-vn')
+        };
+    });
 
     return res.json({
         success: true,
         status: 200,
         msg: 'Orders found',
-        data: orders
-    })
+        data: orders,
+    });
 }
 
 async function GET_VerifyOrigin(req, res, next) {
@@ -194,32 +214,32 @@ async function GET_VerifyOrigin(req, res, next) {
     try {
         const contract = await loadContract();
         let delivery_info = await contract.get_delivery_info({
-            _isbn_code: code
+            _isbn_code: code,
         });
 
-        const items = await Order.findOne({ ISBN_code: code})
-                .select({items: 1})
-                .populate({ path: 'items', populate: 'info'})
-                .then(order => { return order.items})
+        const items = await Order.findOne({ ISBN_code: code })
+            .select({ items: 1 })
+            .populate({ path: 'items', populate: 'info' })
+            .then((order) => {
+                return order.items;
+            });
 
         return res.json({
             success: true,
             status: 200,
-            data: { 
-                ...delivery_info, 
-                items: items
-            }
-        })
-
+            data: {
+                ...delivery_info,
+                items: items,
+            },
+        });
     } catch (error) {
         return res.json({
             success: false,
             status: 400,
             msg: error,
-            data: {}
-        })
+            data: {},
+        });
     }
-
 }
 
 async function PUT_UpdateOrder(req, res, next) {
@@ -236,7 +256,7 @@ async function PUT_UpdateOrder(req, res, next) {
     // }
 
     try {
-        let order = await Order.findOne({ ISBN_code: code});
+        let order = await Order.findOne({ ISBN_code: code });
         order.status = status || order.status;
         await order.save();
 
@@ -246,7 +266,7 @@ async function PUT_UpdateOrder(req, res, next) {
                 _isbn_code: code,
                 _status: status,
                 _note: note,
-                _image: "file.filename",
+                _image: 'file.filename',
                 _location: location,
                 _track_signer: track_signer,
             },
@@ -270,7 +290,7 @@ async function PUT_UpdateOrder(req, res, next) {
 async function GET_OrdersInfoByStore(req, res, next) {
     const { store_id } = req.params;
 
-    let orders = await Order.find({store: store_id})
+    let orders = await Order.find({ store: store_id })
         .select({ _id: 0, __v: 0 })
         .populate({
             path: 'items',
@@ -279,27 +299,36 @@ async function GET_OrdersInfoByStore(req, res, next) {
         })
         .populate({
             path: 'store',
-            select: 'name location createdAt'
+            select: 'name location createdAt',
         })
         .populate({
             path: 'customer',
         })
-        .sort({create4At: -1})
+        .sort({ createdAt: -1 })
         .lean();
-    
 
-    orders = orders.map(order => {
+    orders = orders.map((order) => {
         let encrypted = encryptAES(apiUrl + `/order/verify_origin/${order.ISBN_code}`, secretKey);
         return {
-            ...order, link: encrypted, createdAt: order.createdAt.toLocaleString('vi-vn')
-        }
-    })
-    
+            ...order,
+            link: encrypted,
+            createdAt: order.createdAt.toLocaleString('vi-vn'),
+        };
+    });
+
     return res.json({
         success: true,
         status: 200,
-        data: orders
-    })
+        data: orders,
+    });
 }
 
-export { POST_CreateOrder, GET_OrderInfo, GET_OrdersByCustomer, POST_CheckOut, GET_VerifyOrigin, PUT_UpdateOrder, GET_OrdersInfoByStore }
+export {
+    POST_CreateOrder,
+    GET_OrderInfo,
+    GET_OrdersByCustomer,
+    POST_CheckOut,
+    GET_VerifyOrigin,
+    PUT_UpdateOrder,
+    GET_OrdersInfoByStore,
+};
