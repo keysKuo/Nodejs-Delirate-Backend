@@ -8,9 +8,10 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sendMail } from 'sud-libs';
 import QRCode from 'qrcode';
-import { mailForm, hashBcrypt, hashMD5, loadContract, hashSHA256 } from '../../utils/index.js';
+import { hashBcrypt, hashSHA256 } from '../../utils/crypto/crypto.js';
+import { mailForm, loadContract } from '../../utils/index.js';
 import dotenv from 'dotenv';
-import createStripeSession from '../../payments/stripe.js';
+import createStripeSession from '../../utils/payments/stripe.js';
 
 dotenv.config();
 
@@ -22,12 +23,7 @@ const auth = {
     pass: process.env.HOST_PASSWORD,
 };
 
-/**
- * Description: Register a new Account
- * Request:     POST /account/register
- * Send:        JSON object which contains email, password, password_confirm, name, location, phone, role
- * Receive:     200 if success, otherwise fail
- */
+
 async function POST_Register(req, res, next) {
     const { email, password, password_confirm, name, location, phone, role, folder } = req.body;
 
@@ -137,12 +133,7 @@ async function POST_Register(req, res, next) {
     }
 }
 
-/**
- * Description: Login to App
- * Request:     POST /account/login
- * Send:        JSON object which contains email, password
- * Receive:     200 if success, otherwise fail
- */
+
 async function POST_Login(req, res, next) {
     const { email, password } = req.body;
 
@@ -221,12 +212,7 @@ async function POST_Login(req, res, next) {
     }
 }
 
-/**
- * Description: Activate an account by scanning QR code
- * Request:     POST /account/verify/:token
- * Send:        jwt token which contains account_id as param
- * Receive:     200 if success, otherwise fail
- */
+
 async function GET_Verify(req, res, next) {
     const { token } = req.query;
 

@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import { hashMD5, loadContract } from '../../utils/index.js';
 import Item from './Model.js';
 import Account from '../Account/Model.js';
 import fileapis from '../../middlewares/fileapis.js';

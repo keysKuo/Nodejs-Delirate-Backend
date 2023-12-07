@@ -1,6 +1,6 @@
 import stripeAPI from 'stripe';
 import dotenv from 'dotenv';
-import Order from '../resources/Order/Model.js';
+import Order from '../../resources/Order/Model.js';
 
 
 dotenv.config();

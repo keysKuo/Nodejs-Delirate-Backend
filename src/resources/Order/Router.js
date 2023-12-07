@@ -5,12 +5,64 @@ import { POST_CreateCheckout } from "../Checkout/Resolver.js";
 
 const router = express.Router();
 
+/**
+ * Description: Create new Order and Checkout
+ * Request:     POST /order/create
+ * Send:        JSON object which contains store_id, items, name, phone, email, address , note, total_price, payment_type
+ * Receive:     200 if success, otherwise fail
+ */
 router.post('/create', POST_CreateOrder, POST_CreateCheckout);
-router.get('/get_order_info/:code', GET_OrderInfo);
-router.get('/get_orders_by_customer/:customer_id', GET_OrdersByCustomer);
-router.get('/get_orders_by_store/:store_id', GET_OrdersInfoByStore);
-router.put('/tracking_delivery/:id', PUT_UpdateOrder);
 
+/**
+ * Description: Get orer info by ISBN_code
+ * Request:     GET /order/get_order_info/:code
+ * Send:        ISBN code as request params
+ * Receive:     Order info if success, otherwise fail
+ */
+router.get('/get_order_info/:code', GET_OrderInfo);
+
+
+/**
+ * Description: Get orers list by customer_id
+ * Request:     GET /order/get_orders_by_customer/:customer_id
+ * Send:        Customer id as request params
+ * Receive:     Orders list if success, otherwise fail
+ */
+router.get('/get_orders_by_customer/:customer_id', GET_OrdersByCustomer);
+
+
+/**
+ * Description: Get orers list by store_id
+ * Request:     GET /order/get_orders_by_store/:store_id
+ * Send:        Store id as request params
+ * Receive:     Orders list if success, otherwise fail
+ */
+router.get('/get_orders_by_store/:store_id', GET_OrdersInfoByStore);
+
+
+/**
+ * Description: Tracking delivery by ISBN code
+ * Request:     PUT /order/tracking_delivery/:code
+ * Send:        ISBN code as request params
+ * Receive:     200 if success, otherwise fail
+ */
+router.put('/tracking_delivery/:code', PUT_UpdateOrder);
+
+/**
+ * Description: Verify origin of order by ISBN code
+ * Request:     GET /verify_origin/:code
+ * Send:        ISBN code as request params
+ * Receive:     200 if success, otherwise fail
+ */
+router.get('/verify_origin/:code', GET_VerifyOrigin);
+
+
+/**
+ * Description: Check payment status
+ * Request:     GET /order/check-payment/:id
+ * Send:        Order id as request params
+ * Receive:     200 if success, otherwise fail
+ */
 router.get('/check-payment/:id', async (req, res, next) => {
     const { id } = req.params;
 
@@ -39,6 +91,6 @@ router.get('/check-payment/:id', async (req, res, next) => {
         })
 })
 
-router.get('/verify_origin/:code', GET_VerifyOrigin);
+
 
 export default router

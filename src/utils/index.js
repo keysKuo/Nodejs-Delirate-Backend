@@ -1,26 +1,5 @@
-import bcrypt from 'bcryptjs';
-import crypto from 'crypto-js';
 import dotenv from 'dotenv';
 import nearAPI from 'near-api-js'
-import fs from 'fs-extra';
-import NodeRSA from 'node-rsa';
-import { Crypt, RSA } from 'hybrid-crypto-js';
-
-function gerenateKeys() {
-    const key = new NodeRSA({ b: 2048 });
-    const publicKey = key.exportKey('public');
-    const privateKey = key.exportKey('private');
-    let data = JSON.stringify({publicKey, privateKey}, null, 2);
-    let filePath = './src/config/credentials.json';
-
-    fs.writeFile(filePath, data, (err) => {
-        if (err) {
-            console.error('Error writing JSON data to file:', err);
-        } else {
-            console.log('JSON data has been written to the file successfully.');
-        }
-    });
-}
 
 // gerenateKeys();
 
@@ -79,39 +58,7 @@ function mailForm(options) {
     `;
 };
 
-// Hash password using bcrypt
-function hashBcrypt(password) {
-    return bcrypt.hashSync(password, 10);
-}
 
-function hashSHA256(data) {
-    return crypto.SHA256(JSON.stringify(data)).toString();
-}
-
-
-function encryptRSA(data) {
-    const crypt = new Crypt();
-    return crypt.encrypt(credentials["publicKey"], data);
-}
-
-function decryptRSA(encode) {
-    const crypt = new Crypt();
-    return crypt.decrypt(credentials["privateKey"], encode);
-}
-
-function encryptAES(data, secretKey) {
-    return crypto.AES.encrypt(JSON.stringify(data), secretKey).toString();
-}
-
-function decryptAES(encode, secretKey) {
-    let bytes = crypto.AES.decrypt(encode, secretKey);
-    return JSON.parse(bytes.toString(crypto.enc.Utf8));
-}
-
-// Hash email using md5
-function hashMD5(email) {
-    return crypto.HmacMD5(email).toString();
-}
 
 
 async function loadContract() {
@@ -142,4 +89,4 @@ async function loadContract() {
     return ctr;
 }
 
-export { mailForm, hashBcrypt, hashMD5, loadContract, hashSHA256, encryptAES, decryptAES, encryptRSA, decryptRSA };
+export { mailForm, loadContract };

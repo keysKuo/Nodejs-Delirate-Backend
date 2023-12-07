@@ -14,9 +14,31 @@ import express from 'express';
 
 const router = express.Router();
 
+/**
+ * Description: Register a new Account
+ * Request:     POST /account/register
+ * Send:        JSON object which contains email, password, password_confirm, name, location, phone, role
+ * Receive:     200 if success, otherwise fail
+ */
 router.post('/register', upload.single('file'), POST_Register);
+
+/**
+ * Description: Login to App
+ * Request:     POST /account/login
+ * Send:        JSON object which contains email, password
+ * Receive:     200 if success, otherwise fail
+ */
 router.post('/login', POST_Login);
+
+/**
+ * Description: Activate an account by scanning QR code
+ * Request:     POST /account/verify/:token
+ * Send:        jwt token which contains account_id as param
+ * Receive:     200 if success, otherwise fail
+ */
 router.get('/verify', GET_Verify);
+
+
 router.post('/confirm_otp', POST_ConfirmOTP);
 router.post('/resend_otp', POST_ResendOTP);
 

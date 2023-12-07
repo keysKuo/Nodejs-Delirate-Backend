@@ -1,10 +1,9 @@
 import dotenv from 'dotenv';
-import { encryptAES, decryptAES, loadContract, mailForm, hashSHA256 } from '../../utils/index.js';
+import { encryptAES } from '../../utils/crypto/crypto.js';
 import Order from './Model.js';
 import Customer from '../Customer/Model.js';
 import Account from '../Account/Model.js';
-import {  sendMail } from 'sud-libs';
-import QRCODE from 'qrcode';
+import { loadContract } from '../../utils/index.js';
 
 dotenv.config();
 
@@ -171,7 +170,9 @@ async function GET_OrderInfo(req, res, next) {
 async function GET_OrdersByCustomer(req, res, next) {
     const { customer_id } = req.params;
     
-    let orders = await Order.find({ customer: customer_id }).lean();
+    let orders = await Order.find({ customer: customer_id })
+    .sort({created_at: -1})
+    .lean();
     orders = orders.map(order => {
         let encrypted = encryptAES(apiUrl + `/order/get_order_info/${order.ISBN_code}`, secretKey);
         return {
@@ -283,6 +284,7 @@ async function GET_OrdersInfoByStore(req, res, next) {
         .populate({
             path: 'customer',
         })
+        .sort({create4At: -1})
         .lean();
     
 
