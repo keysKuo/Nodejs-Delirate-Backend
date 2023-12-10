@@ -1,6 +1,7 @@
 import { POST_ConfirmOTP, POST_ResendOTP } from '../OTP/Resolver.js';
 import upload from '../../middlewares/multer.js';
 import {
+    GET_AccountBalance,
     GET_AnswerPermissionLoginQR,
     GET_CheckLoginQR,
     GET_LoginQR,
@@ -32,7 +33,7 @@ router.post('/login', POST_Login);
 
 /**
  * Description: Activate an account by scanning QR code
- * Request:     POST /account/verify/:token
+ * Request:     GET /account/verify/:token
  * Send:        jwt token which contains account_id as param
  * Receive:     200 if success, otherwise fail
  */
@@ -46,5 +47,7 @@ router.get('/login_qr', GET_LoginQR);
 router.post('/login_qr', POST_LoginQR);
 router.get('/checklogin_qr', GET_CheckLoginQR);
 router.get('/admit_permission', GET_AnswerPermissionLoginQR);
+
+router.get('/get_account_balance', GET_AccountBalance);
 
 export default router;

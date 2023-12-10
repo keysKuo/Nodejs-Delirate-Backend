@@ -15,7 +15,7 @@ import Customer from './resources/Customer/Model.js';
 import Order from './resources/Order/Model.js';
 import Account from './resources/Account/Model.js';
 import Checkout from './resources/Checkout/Model.js';
-import { loadContract } from './utils/index.js';
+import { loadContract, sendNear } from './utils/index.js';
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 8080;
@@ -189,6 +189,12 @@ app.put('/stripe-success', PUT_StripePaymentGateWay);
 
 app.get('/near-payment', GET_NearPaymentQR);
 app.put('/near-payment', PUT_NearPaymentQR);
+
+app.get('/test_sendNear', async (req ,res ,next) => {
+    const result = await sendNear();
+
+    return res.json(result);
+})
 
 app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`);

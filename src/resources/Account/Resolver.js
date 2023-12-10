@@ -10,7 +10,7 @@ import crypto from 'crypto';
 import { sendMail } from 'sud-libs';
 import QRCode from 'qrcode';
 import { hashBcrypt, hashSHA256 } from '../../utils/crypto/crypto.js';
-import { mailForm, loadContract } from '../../utils/index.js';
+import { mailForm, loadContract, getAccountBalance, sendNear } from '../../utils/index.js';
 import dotenv from 'dotenv';
 import createStripeSession from '../../utils/payments/stripe.js';
 
@@ -91,6 +91,13 @@ async function POST_Register(req, res, next) {
             avatar: folder + '/' + file.filename,
         }).save();
 
+        await new Customer({
+            email,
+            name,
+            address: location,
+            phone,
+        }).save();
+
         // Encode URL
         const token = jwt.sign({ id: new_account._id }, secretKey);
         const qrcode = await QRCode.toDataURL(`${apiUrl}/account/verify?token=${token}`);
@@ -164,8 +171,19 @@ async function POST_Login(req, res, next) {
         });
     }
 
-    let customer_id = await Customer.findOne({email: my_account.email})
-        .then(customer => customer._id)
+    let customer = await Customer.findOne({email: my_account.email})
+        .then(async customer => {
+            if(customer) {
+                return customer;
+            }
+
+            return await new Customer({
+                name: my_account.name,
+                email: my_account.email,
+                address: my_account.location,
+                phone: my_account.phone
+            }).save()
+        })
     
     // Generate OTP and Send OTP
     const user_info = {
@@ -176,7 +194,7 @@ async function POST_Login(req, res, next) {
         location: my_account.location,
         phone: my_account.phone,
         role: my_account.role,
-        customer_id: customer_id
+        customer_id: customer._id
     };
 
     try {
@@ -220,7 +238,6 @@ async function POST_Login(req, res, next) {
 
 async function GET_Verify(req, res, next) {
     const { token } = req.query;
-
     jwt.verify(token, secretKey, async (error, decoded) => {
         if (error) {
             return res.json({
@@ -415,6 +432,23 @@ async function GET_CheckLoginQR(req, res, next) {
     });
 }
 
+async function GET_AccountBalance(req, res, next) {
+    let balance = await getAccountBalance();
+    if(balance) {
+        return res.json({
+            success: true,
+            status: 200,
+            balance: balance.available
+        })
+    }
+
+    return res.json({
+        success: false,
+        status: 500,
+        msg: 'Balance not found'
+    })
+}
+
 async function GET_NearPaymentQR(req, res, next) {
     const { receiver, order_id, amount } = req.query;
     const token = crypto.randomBytes(20).toString('hex');
@@ -466,16 +500,25 @@ async function PUT_NearPaymentQR(req, res, next) {
             });
         }
 
-        const contract = await loadContract();
-        await contract.payment_test(
-            {
-                _receiver: receiver,
-                _order_id: order_id,
-                _amount: parseInt(amount),
-            },
-            '300000000000000', // attached GAS (optional)
-            '2000000000000000000000000', // attached deposit in yoctoNEAR (optional)
-        );
+        // const contract = await loadContract();
+        // await contract.payment_test(
+        //     {
+        //         _receiver: receiver,
+        //         _order_id: order_id,
+        //         _amount: parseInt(amount),
+        //     },
+        //     '300000000000000', // attached GAS (optional)
+        //     '2000000000000000000000000', // attached deposit in yoctoNEAR (optional)
+        // );
+
+        let receipt = await sendNear();
+        if(!receipt) {
+            return res.json({
+                success: false,
+                status: 501,
+                msg: 'Fail to send Near'
+            })
+        }
 
         await Order.findByIdAndUpdate(order_id, { $set: { status: 'Paid' } });
         await Checkout.findOneAndUpdate({ order: order_id }, { $set: { status: 'Completed' } });
@@ -486,6 +529,7 @@ async function PUT_NearPaymentQR(req, res, next) {
             success: true,
             status: 200,
             msg: 'Near Payment Success',
+            receipt
         });
     } catch (error) {
         return res.json({
@@ -550,6 +594,7 @@ async function PUT_StripePaymentGateWay(req, res, next) {
 export {
     GET_StripePaymentGateway,
     PUT_StripePaymentGateWay,
+    GET_AccountBalance,
     GET_NearPaymentQR,
     PUT_NearPaymentQR,
     POST_Register,

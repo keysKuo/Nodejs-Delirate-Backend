@@ -178,7 +178,7 @@ async function GET_OrdersByCustomer(req, res, next) {
         .populate({
             path: 'items',
             select: '-_id -__v',
-            populate: { path: 'info', select: '-item_id -_id -__v -updatedAt -createdAt' },
+            populate: { path: 'info', select: '-item_id -_id -desc -__v -updatedAt -createdAt' },
         })
         .populate({
             path: 'store',

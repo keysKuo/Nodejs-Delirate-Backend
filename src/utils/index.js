@@ -6,15 +6,6 @@ import nearAPI from 'near-api-js'
 
 dotenv.config()
 
-const { keyStores, connect, Contract, KeyPair } = nearAPI;
-
-const ACCOUNT_ID = process.env.ACCOUNT_ID || "nkeyskuo186.testnet"
-const NETWORK_ID = process.env.NETWORK_ID || "testnet";
-
-const KEY_STORE = new keyStores.InMemoryKeyStore();
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const keyPair = KeyPair.fromString(PRIVATE_KEY);
-
 
 function mailForm(options) {
     let logo_link = options.logo_link || process.env.LOGO_LINK;
@@ -60,6 +51,15 @@ function mailForm(options) {
 
 
 
+const { keyStores, connect, Contract, KeyPair } = nearAPI;
+
+const ACCOUNT_ID = process.env.ACCOUNT_ID || "nkeyskuo186.testnet"
+const NETWORK_ID = process.env.NETWORK_ID || "testnet";
+
+const KEY_STORE = new keyStores.InMemoryKeyStore();
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const keyPair = KeyPair.fromString(PRIVATE_KEY);
+
 
 async function loadContract() {
     await KEY_STORE.setKey(NETWORK_ID, ACCOUNT_ID , keyPair)
@@ -89,4 +89,45 @@ async function loadContract() {
     return ctr;
 }
 
-export { mailForm, loadContract };
+async function getAccountBalance() {
+    await KEY_STORE.setKey(NETWORK_ID, ACCOUNT_ID , keyPair)
+    
+    const connectionConfig = {
+        networkId: NETWORK_ID,
+        keyStore: KEY_STORE, // first create a key store 
+        nodeUrl: "https://rpc.testnet.near.org",
+        walletUrl: "https://wallet.testnet.near.org",
+        helperUrl: "https://helper.testnet.near.org",
+        explorerUrl: "https://explorer.testnet.near.org",
+    };
+
+    const nearConnection = await connect(connectionConfig);
+    const account = await nearConnection.account(ACCOUNT_ID);
+
+    return await account.getAccountBalance();
+}
+
+async function sendNear() {
+    await KEY_STORE.setKey(NETWORK_ID, ACCOUNT_ID , keyPair);
+
+    const connectionConfig = {
+        networkId: NETWORK_ID,
+        keyStore: KEY_STORE, // first create a key store 
+        nodeUrl: "https://rpc.testnet.near.org",
+        walletUrl: "https://wallet.testnet.near.org",
+        helperUrl: "https://helper.testnet.near.org",
+        explorerUrl: "https://explorer.testnet.near.org",
+    };
+
+    const nearConnection = await connect(connectionConfig);
+    const account = await nearConnection.account(ACCOUNT_ID);
+
+    return await account.sendMoney(
+        "nkeyskuo296.testnet", // receiver account
+        "2000000000000000000000000" // amount in yoctoNEAR
+      );
+
+}
+
+
+export { mailForm, loadContract, getAccountBalance, sendNear };
