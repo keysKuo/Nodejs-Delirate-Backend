@@ -2,6 +2,7 @@ import { GET_OrderInfo, POST_CreateOrder, GET_OrdersByCustomer, PUT_UpdateOrder,
 import express from 'express';
 import Order from './Model.js';
 import { POST_CreateCheckout } from "../Checkout/Resolver.js";
+import upload from "../../middlewares/multer.js";
 
 const router = express.Router();
 
@@ -46,7 +47,7 @@ router.get('/get_orders_by_store/:store_id', GET_OrdersInfoByStore);
  * Send:        ISBN code as request params
  * Receive:     200 if success, otherwise fail
  */
-router.put('/tracking_delivery/:code', PUT_UpdateOrder);
+router.put('/tracking_delivery/:code', upload.single('file'), PUT_UpdateOrder);
 
 /**
  * Description: Verify origin of order by ISBN code
@@ -63,10 +64,10 @@ router.get('/verify_origin/:code', GET_VerifyOrigin);
  * Send:        Order id as request params
  * Receive:     200 if success, otherwise fail
  */
-router.get('/check-payment/:id', async (req, res, next) => {
-    const { id } = req.params;
+router.get('/check-payment/:code', async (req, res, next) => {
+    const { code } = req.params;
 
-    await Order.findById(id)
+    await Order.findOne({ISBN_code: code})
         .then(order => {
             if(order.status === 'Paid') {
                 return res.json({

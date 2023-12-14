@@ -30,7 +30,7 @@ async function POST_CheckOut(req, res, next) {
  * Receive:     200 if success, otherwise fail
  */
 async function POST_CreateOrder(req, res, next) {
-    const { store_id, items, name, phone, email, address, note, total_price, payment_type } = req.body;
+    const {  items, name, phone, email, address, note, total_price, payment_type } = req.body;
 
     try {
         let exist_customer = await Customer.findOne({
@@ -217,12 +217,17 @@ async function GET_VerifyOrigin(req, res, next) {
             _isbn_code: code,
         });
 
-        const items = await Order.findOne({ ISBN_code: code })
-            .select({ items: 1 })
-            .populate({ path: 'items', populate: 'info' })
-            .then((order) => {
-                return order.items;
-            });
+        var items = [];
+             await Order.find({ ISBN_code: code })
+                .select({ items: 1 })
+                .populate({ path: 'items', populate: 'info' })
+                .then((orders) => {
+                    return orders.forEach(order => {
+                        order.items.forEach(item => {
+                            items.push(item)
+                        })
+                    });
+                });
 
         return res.json({
             success: true,
@@ -244,21 +249,28 @@ async function GET_VerifyOrigin(req, res, next) {
 
 async function PUT_UpdateOrder(req, res, next) {
     const { code } = req.params;
-    const { status, note, location, track_signer } = req.body;
-
-    // const file = req.file;
-    // if(!file) {
-    //     return res.json({
-    //         success: false,
-    //         status: 300,
-    //         msg: 'Image not found'
-    //     })
-    // }
+    const { status, note, location, track_signer, folder } = req.body;
+    // console.log(req.body);
+    
+    const file = req.file;
+    if(!file) {
+        return res.json({
+            success: false,
+            status: 300,
+            msg: 'Image not found'
+        })
+    }
 
     try {
-        let order = await Order.findOne({ ISBN_code: code });
-        order.status = status || order.status;
-        await order.save();
+
+        let update = await Order.updateMany({ ISBN_code: code }, { status: status })
+        if(!update) {
+            return res.json({
+                success: false,
+                status: 500,
+                msg: 'Update orders fail'
+            })
+        }
 
         const contract = await loadContract();
         await contract.tracking_delivery({
@@ -266,7 +278,7 @@ async function PUT_UpdateOrder(req, res, next) {
                 _isbn_code: code,
                 _status: status,
                 _note: note,
-                _image: 'file.filename',
+                _image: folder + '/' + file.filename,
                 _location: location,
                 _track_signer: track_signer,
             },

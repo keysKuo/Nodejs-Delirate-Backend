@@ -12,6 +12,7 @@ const Account = new Schema(
 		phone: { type: String, required: true },
 		role: { type: String, required: true },
 		status: { type: String, default: 'unverified' },
+		store: { type: mongoose.Types.ObjectId, ref: 'Store'}
 	},
 	{
 		timestamps: true,

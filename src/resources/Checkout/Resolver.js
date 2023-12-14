@@ -29,9 +29,9 @@ async function POST_CreateCheckout(req, res, next) {
 }
 
 async function GET_CheckoutInfo(req, res, next) {
-    const { order_id } = req.params;
+    const { code } = req.params;
 
-    let checkout = await Checkout.findOne({order: order_id})
+    let checkout = await Checkout.findOne({ISBN_code: code})
     .populate({path: 'order'})
     .lean();
 

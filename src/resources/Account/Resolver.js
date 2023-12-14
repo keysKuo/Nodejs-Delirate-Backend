@@ -3,6 +3,7 @@ import OTP from '../OTP/Model.js';
 import Order from '../Order/Model.js';
 import Checkout from '../Checkout/Model.js';
 import Customer from '../Customer/Model.js';
+import Store from '../Store/Model.js';
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -23,7 +24,6 @@ const auth = {
     user: process.env.HOST_EMAIL,
     pass: process.env.HOST_PASSWORD,
 };
-
 
 async function POST_Register(req, res, next) {
     const { email, password, password_confirm, name, location, phone, role, folder } = req.body;
@@ -141,11 +141,10 @@ async function POST_Register(req, res, next) {
     }
 }
 
-
 async function POST_Login(req, res, next) {
     const { email, password } = req.body;
 
-    const my_account = await Account.findOne({ email }).lean();
+    const my_account = await Account.findOne({ email }).populate({ path: 'store' }).lean();
 
     if (!my_account) {
         return res.json({
@@ -171,20 +170,19 @@ async function POST_Login(req, res, next) {
         });
     }
 
-    let customer = await Customer.findOne({email: my_account.email})
-        .then(async customer => {
-            if(customer) {
-                return customer;
-            }
+    let customer = await Customer.findOne({ email: my_account.email }).then(async (customer) => {
+        if (customer) {
+            return customer;
+        }
 
-            return await new Customer({
-                name: my_account.name,
-                email: my_account.email,
-                address: my_account.location,
-                phone: my_account.phone
-            }).save()
-        })
-    
+        return await new Customer({
+            name: my_account.name,
+            email: my_account.email,
+            address: my_account.location,
+            phone: my_account.phone,
+        }).save();
+    });
+
     // Generate OTP and Send OTP
     const user_info = {
         email: my_account.email,
@@ -194,8 +192,12 @@ async function POST_Login(req, res, next) {
         location: my_account.location,
         phone: my_account.phone,
         role: my_account.role,
-        customer_id: customer._id
+        customer_id: customer._id,
     };
+
+    if (my_account.role === 'retailer') {
+        user_info['store'] = my_account.store;
+    }
 
     try {
         let otp = await new OTP({
@@ -234,7 +236,6 @@ async function POST_Login(req, res, next) {
         });
     }
 }
-
 
 async function GET_Verify(req, res, next) {
     const { token } = req.query;
@@ -351,7 +352,20 @@ async function POST_LoginQR(req, res, next) {
         });
     }
 
-    let my_account = await Account.findOne({ email }).lean();
+    let my_account = await Account.findOne({ email }).populate({ path: 'store' }).lean();
+
+    let customer = await Customer.findOne({ email: my_account.email }).then(async (customer) => {
+        if (customer) {
+            return customer;
+        }
+
+        return await new Customer({
+            name: my_account.name,
+            email: my_account.email,
+            address: my_account.location,
+            phone: my_account.phone,
+        }).save();
+    });
 
     const user_info = {
         email: my_account.email,
@@ -361,7 +375,12 @@ async function POST_LoginQR(req, res, next) {
         location: my_account.location,
         phone: my_account.phone,
         role: my_account.role,
+        customer_id: customer._id,
     };
+
+    if (my_account.role === 'retailer') {
+        user_info['store'] = my_account.store;
+    }
 
     // tokens[token].verify = true;
     tokens[token].user = user_info;
@@ -434,29 +453,29 @@ async function GET_CheckLoginQR(req, res, next) {
 
 async function GET_AccountBalance(req, res, next) {
     let balance = await getAccountBalance();
-    if(balance) {
+    if (balance) {
         return res.json({
             success: true,
             status: 200,
-            balance: balance.available
-        })
+            balance: balance.available,
+        });
     }
 
     return res.json({
         success: false,
         status: 500,
-        msg: 'Balance not found'
-    })
+        msg: 'Balance not found',
+    });
 }
 
 async function GET_NearPaymentQR(req, res, next) {
-    const { receiver, order_id, amount } = req.query;
+    const { code, amount } = req.query;
     const token = crypto.randomBytes(20).toString('hex');
     tokens[token] = { createdAt: Date.now() };
 
-    const nearPaymentUrl = `${apiUrl}/near-payment?receiver=${receiver}&order_id=${order_id}&amount=${amount}&token=${token}`;
+    const nearPaymentUrl = `${apiUrl}/near-payment?code=${code}&amount=${amount}&token=${token}`;
 
-    return await QRCode.toDataURL(nearPaymentUrl, (err, url) => {
+    return QRCode.toDataURL(nearPaymentUrl, (err, url) => {
         if (err) {
             return res.json({
                 success: false,
@@ -470,14 +489,14 @@ async function GET_NearPaymentQR(req, res, next) {
             success: true,
             status: 200,
             token: token,
-            order_id: order_id,
+            code: code,
             url: url,
         });
     });
 }
 
 async function PUT_NearPaymentQR(req, res, next) {
-    const { receiver, order_id, amount, token } = req.query;
+    const { code, amount, token } = req.query;
     const tokenData = tokens[token];
     const expiresIn = 900;
 
@@ -500,28 +519,17 @@ async function PUT_NearPaymentQR(req, res, next) {
             });
         }
 
-        // const contract = await loadContract();
-        // await contract.payment_test(
-        //     {
-        //         _receiver: receiver,
-        //         _order_id: order_id,
-        //         _amount: parseInt(amount),
-        //     },
-        //     '300000000000000', // attached GAS (optional)
-        //     '2000000000000000000000000', // attached deposit in yoctoNEAR (optional)
-        // );
-
         let receipt = await sendNear();
-        if(!receipt) {
+        if (!receipt) {
             return res.json({
                 success: false,
                 status: 501,
-                msg: 'Fail to send Near'
-            })
+                msg: 'Fail to send Near',
+            });
         }
 
-        await Order.findByIdAndUpdate(order_id, { $set: { status: 'Paid' } });
-        await Checkout.findOneAndUpdate({ order: order_id }, { $set: { status: 'Completed' } });
+        await Order.updateMany({ISBN_code: code}, { status: 'Paid' });
+        await Checkout.findOneAndUpdate({ISBN_code: code}, { $set: { status: 'Completed' } });
 
         console.log('7.Near Payment Success');
         delete tokens[token];
@@ -529,7 +537,7 @@ async function PUT_NearPaymentQR(req, res, next) {
             success: true,
             status: 200,
             msg: 'Near Payment Success',
-            receipt
+            receipt,
         });
     } catch (error) {
         return res.json({
@@ -541,16 +549,16 @@ async function PUT_NearPaymentQR(req, res, next) {
 }
 
 async function GET_StripePaymentGateway(req, res, next) {
-    const { order_id } = req.query;
+    const { code } = req.query;
 
-    const stripe_url = await createStripeSession(order_id)
-
+    const stripe_url = await createStripeSession(code);
+    // console.log(stripe_url)
     if (stripe_url) {
         return res.json({
             success: true,
             status: 200,
             msg: 'Order Created',
-            order_id: order_id,
+            code: code,
             url: stripe_url,
         });
     }
@@ -563,11 +571,11 @@ async function GET_StripePaymentGateway(req, res, next) {
 }
 
 async function PUT_StripePaymentGateWay(req, res, next) {
-    const { order_id } = req.query;
-    let order = await Order.findOneAndUpdate({ _id: order_id, status: 'Confirmed' }, { $set: { status: 'Paid' } });
+    const { code } = req.query;
+    let orders = await Order.updateMany({ ISBN_code: code, status: 'Confirmed' }, { status: 'Paid' } );
 
-    if (order) {
-        let checkout = await Checkout.findOneAndUpdate({ order: order }, { $set: { status: 'Completed' } });
+    if (orders) {
+        let checkout = await Checkout.findOneAndUpdate({ ISBN_code: code }, { $set: { status: 'Completed' } });
         if (checkout) {
             console.log('7.Stripe Payment Success');
             return res.json({

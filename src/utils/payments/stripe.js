@@ -8,15 +8,21 @@ dotenv.config();
 let stripeGateway = stripeAPI(process.env.STRIPE_API_KEY);
 let clientUrl = process.env.CLIENT_URL || '';
 
-async function createStripeSession(order_id) {
+async function createStripeSession(code) {
     try {
-        const items = await Order.findById(order_id)
-            .populate({ path: 'items', populate: { path: 'info' } })
-            .then((order) => order.items)
-            .catch((err) => {});
-
+        var items = []
+            await Order.find({ISBN_code: code})
+                .populate({ path: 'items', populate: { path: 'info' } })
+                .then((orders) => orders.forEach(order => {
+                    order.items.forEach(item => {
+                        items.push(item);
+                    })
+                }))
+                .catch((err) => {});
+        
+        // console.log(items);
         const lineItems = items.map((item) => {
-            const unitAmount = item.price * 100;
+            const unitAmount = Math.round(item.price * 100);
 
             return {
                 price_data: {
@@ -34,7 +40,7 @@ async function createStripeSession(order_id) {
         const session = await stripeGateway.checkout.sessions.create({
             payment_method_types: ['card'],
             mode: 'payment',
-            success_url: `${clientUrl}/stripe-success?order_id=${order_id}`,
+            success_url: `${clientUrl}/stripe-success?code=${code}`,
             cancel_url: `${clientUrl}/fail`,
             line_items: lineItems,
             //  Asking address in Stripe
@@ -44,6 +50,7 @@ async function createStripeSession(order_id) {
 
         return session.url;
     } catch (error) {
+        console.log(error)
         return undefined;
     }
 }

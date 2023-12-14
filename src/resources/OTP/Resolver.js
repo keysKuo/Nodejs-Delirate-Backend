@@ -2,11 +2,15 @@ import OTP from './Model.js';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import Account from '../Account/Model.js';
+import Customer from '../Customer/Model.js';
+
 import { sendMail } from 'sud-libs';
 import { mailForm } from '../../utils/index.js';
 dotenv.config();
 
 const secretKey = process.env.JWT_SECRET_KEY;
+
+const apiUrl = process.env.API_URL;
 
 const auth = {
     user: process.env.HOST_EMAIL,
@@ -78,16 +82,35 @@ async function POST_ResendOTP(req, res, next) {
     
     try {
         let myAccount = await Account.findOne({ email });
-        
+
+        let customer = await Customer.findOne({ email: myAccount.email }).then(async (customer) => {
+            if (customer) {
+                return customer;
+            }
+    
+            return await new Customer({
+                name: myAccount.name,
+                email: myAccount.email,
+                address: myAccount.location,
+                phone: myAccount.phone,
+            }).save();
+        });
+
         if(myAccount) {
             const user_info = {
                 email: myAccount.email,
                 hashed_email: myAccount.hashed_email,
                 name: myAccount.name,
                 location: myAccount.location,
+                avatar: apiUrl + '/uploads' + myAccount.avatar,
                 phone: myAccount.phone,
                 role: myAccount.role,
+                customer_id: customer._id,
             };
+
+            if (myAccount.role === 'retailer') {
+                user_info['store'] = myAccount.store;
+            }
 
             let otp = await new OTP({
                 email: email,

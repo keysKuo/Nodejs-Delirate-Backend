@@ -15,7 +15,7 @@ async function POST_CreateItem(req, res, next) {
 
     // const { hashed_email, role } = req.user;
     // const hashed_email = '4cdaa0e01110e3d64916df5d2bc044cc'; //nkeyskuo124@gmail.com
-    let store = await Account.findOne({ hashed_email: distributor }).select({ _id: 1 });
+    // let store = await Account.findOne({ hashed_email: distributor }).select({ _id: 1 });
     const file = req.file;
 
     if (!file) {
@@ -34,7 +34,7 @@ async function POST_CreateItem(req, res, next) {
             desc,
             brand,
             origin,
-            distributor: store._id,
+            distributor: distributor,
             image: folder + '/' + file.filename,
         }).save();
 
@@ -130,6 +130,14 @@ async function GET_ItemInfo(req, res, next) {
     }
 }
 
+
+const shuffle = (array) => { 
+  for (let i = array.length - 1; i > 0; i--) { 
+    const j = Math.floor(Math.random() * (i + 1)); 
+    [array[i], array[j]] = [array[j], array[i]]; 
+  } 
+  return array; 
+}; 
 /**
  * Description: Get All Items that match the filter
  * Request:     GET /item/get_all_items
@@ -148,7 +156,7 @@ async function GET_AllItems(req, res, next) {
         return res.json({
             success: true,
             status: 200,
-            data: items,
+            data: shuffle(items),
         });
     } catch (error) {
         return res.json({

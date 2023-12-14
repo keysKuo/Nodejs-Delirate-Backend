@@ -5,6 +5,7 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const folder = req.headers['folder-path'];
         console.log(folder);
+        
         fileapis.createSync('./src/public/uploads' + folder, err => {
             console.log(err);
         });
@@ -27,7 +28,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    limits: { fieldSize: 2 * 1024 * 1024 }
+    limits: { fieldSize: 10 * 1024 * 1024 }
 })
 
 export default upload;

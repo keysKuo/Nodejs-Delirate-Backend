@@ -9,7 +9,7 @@ const Item = new Schema({
     price: { type: Number, required: true, default: 0},
     origin: { type: String, required: true },
     image: { type: String, required: true },
-    distributor: { type: String, required: true }
+    distributor: { type: mongoose.Types.ObjectId, ref: 'Store', required: true }
 },
 {
     timestamps: true

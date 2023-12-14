@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const Order = new Schema(
     {
-        ISBN_code: { type: String, required: true, unique: true },
+        ISBN_code: { type: String, required: true},
         items: [
             {
                 info: { type: mongoose.Types.ObjectId, ref: 'Item', required: true },
@@ -11,14 +11,14 @@ const Order = new Schema(
                 price: { type: Number, required: true, default: 0 },
             },
         ],
-        store: { type: mongoose.Types.ObjectId, ref: 'Account', required: true },
+        store: { type: mongoose.Types.ObjectId, ref: 'Store', required: true },
         customer: { type: mongoose.Types.ObjectId, ref: 'Customer', required: true },
         note: { type: String },
         total_price: { type: Number, required: true, default: 0 },
         status: {
             type: String,
             required: true,
-            enum: ['Requested', 'Confirmed', 'Paid', 'Transiting', 'Shipping', 'Finished'],
+            enum: ['Requested', 'Confirmed', 'Paid', 'Transiting', 'Shipping', 'Finished', 'Canceled'],
             default: 'Requested'
         },
         payment_type: { type: String, required: true, enum: ['Cash', 'Banking', 'Crypto'] },
