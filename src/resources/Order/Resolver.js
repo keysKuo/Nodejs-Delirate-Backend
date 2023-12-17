@@ -303,11 +303,10 @@ async function GET_OrdersInfoByStore(req, res, next) {
     const { store_id } = req.params;
 
     let orders = await Order.find({ store: store_id })
-        .select({ _id: 0, __v: 0 })
         .populate({
             path: 'items',
             select: '-_id -__v',
-            populate: { path: 'info', select: '-item_id -_id -__v -updatedAt -createdAt' },
+            populate: { path: 'info', select: '-desc -_id -__v -updatedAt -createdAt' },
         })
         .populate({
             path: 'store',
@@ -319,6 +318,15 @@ async function GET_OrdersInfoByStore(req, res, next) {
         .sort({ createdAt: -1 })
         .lean();
 
+
+    if(orders.length == 0) {
+        return res.json({
+            success: false,
+            status: 404,
+            msg: 'Orders not found'
+        })
+    }
+    
     orders = orders.map((order) => {
         let encrypted = encryptAES(apiUrl + `/order/verify_origin/${order.ISBN_code}`, secretKey);
         return {
