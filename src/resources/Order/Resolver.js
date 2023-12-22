@@ -209,16 +209,11 @@ async function GET_OrdersByCustomer(req, res, next) {
 }
 
 async function GET_VerifyOrigin(req, res, next) {
-    const { code } = req.params;
+    const { code, customer_id } = req.params;
 
     try {
-        const contract = await loadContract();
-        let delivery_info = await contract.get_delivery_info({
-            _isbn_code: code,
-        });
-
         var items = [];
-             await Order.find({ ISBN_code: code })
+             await Order.find({ ISBN_code: code, customer: customer_id })
                 .select({ items: 1 })
                 .populate({ path: 'items', populate: 'info' })
                 .then((orders) => {
@@ -228,6 +223,19 @@ async function GET_VerifyOrigin(req, res, next) {
                         })
                     });
                 });
+        
+        if(items.length === 0) {
+            return res.json({
+                success: false,
+                status: 404,
+                msg: 'Items not found'
+            })
+        }
+
+        const contract = await loadContract();
+        let delivery_info = await contract.get_delivery_info({
+            _isbn_code: code,
+        });
 
         return res.json({
             success: true,
@@ -326,9 +334,9 @@ async function GET_OrdersInfoByStore(req, res, next) {
             msg: 'Orders not found'
         })
     }
-    
+
     orders = orders.map((order) => {
-        let encrypted = encryptAES(apiUrl + `/order/verify_origin/${order.ISBN_code}`, secretKey);
+        let encrypted = encryptAES(`${order.ISBN_code} ${order.customer._id}`, secretKey);
         return {
             ...order,
             link: encrypted,

@@ -55,7 +55,7 @@ router.put('/tracking_delivery/:code', upload.single('file'), PUT_UpdateOrder);
  * Send:        ISBN code as request params
  * Receive:     200 if success, otherwise fail
  */
-router.get('/verify_origin/:code', GET_VerifyOrigin);
+router.get('/verify_origin/:code/:customer_id', GET_VerifyOrigin);
 
 
 /**
