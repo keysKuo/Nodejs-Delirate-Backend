@@ -5,7 +5,7 @@ To run this project, make sure that your environment have all of these framework
 * [![Nodejs][Node.js]][Node-url]
 * [![ExpressJS][Express.js]][Express-url]
 * [![MongoDB][MongoDB]][MongoDB-url]
-
+* [![Rust][Rust]][Rust-url]
 
 ### Installation
 
@@ -26,7 +26,6 @@ To run this project, make sure that your environment have all of these framework
    ```sh
    npm run dev
    ```
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
@@ -53,3 +52,6 @@ To run this project, make sure that your environment have all of these framework
 [Express-url]: https://expressjs.com/
 [MongoDB]: https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white
 [MongoDB-url]: https://www.mongodb.com/
+[Rust]: https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white
+[Rust-url]: https://www.rust-lang.org/
+
